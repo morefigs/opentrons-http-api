@@ -20,7 +20,7 @@ class API:
 
     @staticmethod
     def _check_response(response: requests.Response):
-        ...
+        response.raise_for_status()
 
     def _get(self, path: str) -> requests.Response:
         response = requests.get(self._url(path), headers=self._HEADERS)
