@@ -43,39 +43,40 @@ def test_url(api):
 
 
 def test_get(api):
-    with patch('opentrons_http_api.api.requests.get') as mock_get:
+    with patch('opentrons_http_api.api.requests.get') as mock_requests_get:
         with patch.object(api, '_check_response'):
             mock_response = Mock(spec=Response)
-            mock_get.return_value = mock_response
+            mock_requests_get.return_value = mock_response
 
             path = '/path'
             response = api._get(path)
 
             assert response == mock_response
-            mock_get.assert_called_once_with(api._url(path), headers=API._HEADERS)
+            mock_requests_get.assert_called_once_with(api._url(path), headers=API._HEADERS)
             api._check_response.assert_called_once_with(mock_response)
 
 
 def test_post(api):
-    with patch('opentrons_http_api.api.requests.post') as mock_post:
+    with patch('opentrons_http_api.api.requests.post') as mock_requests_post:
         with patch.object(api, '_check_response'):
             mock_response = Mock(spec=Response)
-            mock_post.return_value = mock_response
+            mock_requests_post.return_value = mock_response
 
             path = '/path'
-            data = json.dumps({'foo': 123})
+            data = {'foo': 123}
             other = 'bar'
             response = api._post(path, data, other=other)
 
             assert response == mock_response
-            mock_post.assert_called_once_with(api._url(path), data, headers=API._HEADERS, other=other)
+            mock_requests_post.assert_called_once_with(api._url(path), json.dumps(data), headers=API._HEADERS,
+                                                       other=other)
             api._check_response.assert_called_once_with(mock_response)
 
 
 def test_post_identify(api_with_mock_post):
     seconds = 5
     assert api_with_mock_post.post_identify(seconds) == RESPONSE
-    data = json.dumps({'seconds': seconds})
+    data = {'seconds': seconds}
     api_with_mock_post._post.assert_called_once_with(Paths.IDENTIFY, data)
 
 
@@ -90,7 +91,7 @@ def test_get_robot_lights(api_with_mock_get):
 ])
 def test_post_robot_lights(api_with_mock_post, on):
     assert api_with_mock_post.post_robot_lights(on=on) == RESPONSE
-    data = json.dumps({'on': on})
+    data = {'on': on}
     api_with_mock_post._post.assert_called_once_with(Paths.ROBOT_LIGHTS, data)
 
 
@@ -105,7 +106,7 @@ def test_get_settings(api_with_mock_get):
 ])
 def test_post_settings(api_with_mock_post, id_, value):
     assert api_with_mock_post.post_settings(id_, value) == RESPONSE
-    data = json.dumps({'id': id_, 'value': value})
+    data = {'id': id_, 'value': value}
     api_with_mock_post._post.assert_called_once_with(Paths.SETTINGS, data)
 
 
@@ -130,7 +131,7 @@ def test_get_motors_engaged(api_with_mock_get):
 ])
 def test_post_motors_disengage(api_with_mock_post, axes):
     assert api_with_mock_post.post_motors_disengage(axes) == RESPONSE
-    data = json.dumps({'axes': axes})
+    data = {'axes': axes}
     api_with_mock_post._post.assert_called_once_with(Paths.MOTORS_DISENGAGE, data)
 
 
@@ -171,7 +172,7 @@ def test_get_runs(api_with_mock_get):
 ])
 def test_post_runs(api_with_mock_post, data):
     assert api_with_mock_post.post_runs(data) == RESPONSE
-    api_with_mock_post._post.assert_called_once_with(Paths.RUNS, json.dumps(data))
+    api_with_mock_post._post.assert_called_once_with(Paths.RUNS, data)
 
 
 @pytest.mark.parametrize('run_id', [
@@ -209,7 +210,7 @@ def test_get_runs_run_id_commands_command_id(api_with_mock_get, run_id, command_
 ])
 def test_post_runs_run_id_actions(api_with_mock_post, run_id, data):
     assert api_with_mock_post.post_runs_run_id_actions(run_id, data) == RESPONSE
-    api_with_mock_post._post.assert_called_once_with(Paths.RUNS_RUN_ID_ACTIONS.format(run_id=run_id), json.dumps(data))
+    api_with_mock_post._post.assert_called_once_with(Paths.RUNS_RUN_ID_ACTIONS.format(run_id=run_id), data)
 
 
 def test_get_protocols(api_with_mock_get):
