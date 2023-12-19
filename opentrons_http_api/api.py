@@ -28,6 +28,9 @@ class API:
         return response
 
     def _post(self, path: str, data=None, **kwargs) -> requests.Response:
+        if data is not None:
+            data = json.dumps(data)
+
         response = requests.post(self._url(path), data, headers=self._HEADERS, **kwargs)
         self._check_response(response)
         return response
@@ -43,7 +46,7 @@ class API:
         Blink the OT-2's gantry lights so you can pick it out of a crowd.
         """
         data = {'seconds': seconds}
-        return self._post(Paths.IDENTIFY, json.dumps(data))
+        return self._post(Paths.IDENTIFY, data)
 
     def get_robot_lights(self) -> requests.Response:
         """
@@ -56,7 +59,7 @@ class API:
         Turn the rail lights on or off.
         """
         data = {'on': on}
-        return self._post(Paths.ROBOT_LIGHTS, json.dumps(data))
+        return self._post(Paths.ROBOT_LIGHTS, data)
 
     # SETTINGS
 
@@ -71,7 +74,7 @@ class API:
         Change an advanced setting (feature flag).
         """
         data = {'id': id_, 'value': value}
-        return self._post(Paths.SETTINGS, json.dumps(data))
+        return self._post(Paths.SETTINGS, data)
 
     def get_robot_settings(self) -> requests.Response:
         """
@@ -104,7 +107,7 @@ class API:
         Disengage a motor or set of motors.
         """
         data = {'axes': axes}
-        return self._post(Paths.MOTORS_DISENGAGE, json.dumps(data))
+        return self._post(Paths.MOTORS_DISENGAGE, data)
 
     # CAMERA
 
@@ -141,7 +144,7 @@ class API:
 
         When too many runs already exist, old ones will be automatically deleted to make room for the new one.
         """
-        return self._post(Paths.RUNS, json.dumps(data))
+        return self._post(Paths.RUNS, data)
 
     def get_runs_run_id(self, run_id: str) -> requests.Response:
         """
@@ -166,7 +169,7 @@ class API:
         """
         Provide an action in order to control execution of the run.
         """
-        return self._post(Paths.RUNS_RUN_ID_ACTIONS.format(run_id=run_id), json.dumps(data))
+        return self._post(Paths.RUNS_RUN_ID_ACTIONS.format(run_id=run_id), data)
 
     # MAINTENANCE RUN MANAGEMENT
 
