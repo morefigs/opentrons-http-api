@@ -135,6 +135,14 @@ class API:
         """
         return self._get(Paths.RUNS)
 
+    def post_runs(self, data: dict) -> requests.Response:
+        """
+        Create a new run to track robot interaction.
+
+        When too many runs already exist, old ones will be automatically deleted to make room for the new one.
+        """
+        return self._post(Paths.RUNS, json.dumps(data))
+
     def get_runs_run_id(self, run_id: str) -> requests.Response:
         """
         Get a specific run by its unique identifier.

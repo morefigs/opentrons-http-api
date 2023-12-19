@@ -76,12 +76,12 @@ def test_post_identify(api_with_mock_post):
     seconds = 5
     assert api_with_mock_post.post_identify(seconds) == RESPONSE
     data = json.dumps({'seconds': seconds})
-    api_with_mock_post._post.assert_called_with(Paths.IDENTIFY, data)
+    api_with_mock_post._post.assert_called_once_with(Paths.IDENTIFY, data)
 
 
 def test_get_robot_lights(api_with_mock_get):
     assert api_with_mock_get.get_robot_lights() == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.ROBOT_LIGHTS)
+    api_with_mock_get._get.assert_called_once_with(Paths.ROBOT_LIGHTS)
 
 
 @pytest.mark.parametrize('on', [
@@ -91,12 +91,12 @@ def test_get_robot_lights(api_with_mock_get):
 def test_post_robot_lights(api_with_mock_post, on):
     assert api_with_mock_post.post_robot_lights(on=on) == RESPONSE
     data = json.dumps({'on': on})
-    api_with_mock_post._post.assert_called_with(Paths.ROBOT_LIGHTS, data)
+    api_with_mock_post._post.assert_called_once_with(Paths.ROBOT_LIGHTS, data)
 
 
 def test_get_settings(api_with_mock_get):
     assert api_with_mock_get.get_settings() == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.SETTINGS)
+    api_with_mock_get._get.assert_called_once_with(Paths.SETTINGS)
 
 
 @pytest.mark.parametrize('id_, value', [
@@ -106,22 +106,22 @@ def test_get_settings(api_with_mock_get):
 def test_post_settings(api_with_mock_post, id_, value):
     assert api_with_mock_post.post_settings(id_, value) == RESPONSE
     data = json.dumps({'id': id_, 'value': value})
-    api_with_mock_post._post.assert_called_with(Paths.SETTINGS, data)
+    api_with_mock_post._post.assert_called_once_with(Paths.SETTINGS, data)
 
 
 def test_get_robot_settings(api_with_mock_get):
     assert api_with_mock_get.get_robot_settings() == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.SETTINGS_ROBOT)
+    api_with_mock_get._get.assert_called_once_with(Paths.SETTINGS_ROBOT)
 
 
 def test_get_calibration_status(api_with_mock_get):
     assert api_with_mock_get.get_calibration_status() == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.CALIBRATION_STATUS)
+    api_with_mock_get._get.assert_called_once_with(Paths.CALIBRATION_STATUS)
 
 
 def test_get_motors_engaged(api_with_mock_get):
     assert api_with_mock_get.get_motors_engaged() == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.MOTORS_ENGAGED)
+    api_with_mock_get._get.assert_called_once_with(Paths.MOTORS_ENGAGED)
 
 
 @pytest.mark.parametrize('axes', [
@@ -131,22 +131,47 @@ def test_get_motors_engaged(api_with_mock_get):
 def test_post_motors_disengage(api_with_mock_post, axes):
     assert api_with_mock_post.post_motors_disengage(axes) == RESPONSE
     data = json.dumps({'axes': axes})
-    api_with_mock_post._post.assert_called_with(Paths.MOTORS_DISENGAGE, data)
+    api_with_mock_post._post.assert_called_once_with(Paths.MOTORS_DISENGAGE, data)
 
 
 def test_get_camera_picture(api_with_mock_get):
     assert api_with_mock_get.get_camera_picture() == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.CAMERA_PICTURE)
+    api_with_mock_get._get.assert_called_once_with(Paths.CAMERA_PICTURE)
 
 
 def test_get_health(api_with_mock_get):
     assert api_with_mock_get.get_health() == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.HEALTH)
+    api_with_mock_get._get.assert_called_once_with(Paths.HEALTH)
 
 
 def test_get_runs(api_with_mock_get):
     assert api_with_mock_get.get_runs() == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.RUNS)
+    api_with_mock_get._get.assert_called_once_with(Paths.RUNS)
+
+
+@pytest.mark.parametrize('data', [
+    {
+        'protocolId': 'protocol_id_1',
+        'labwareOffsets': [
+            {
+                'definitionUri': 'string',
+                'location': {
+                    'slotName': '1',
+                    'moduleModel': 'temperatureModuleV1',
+                    'definitionUri': 'string'
+                },
+                'vector': {
+                    'x': 0,
+                    'y': 0,
+                    'z': 0
+                }
+            }
+        ]
+    }
+])
+def test_post_runs(api_with_mock_post, data):
+    assert api_with_mock_post.post_runs(data) == RESPONSE
+    api_with_mock_post._post.assert_called_once_with(Paths.RUNS, json.dumps(data))
 
 
 @pytest.mark.parametrize('run_id', [
@@ -155,7 +180,7 @@ def test_get_runs(api_with_mock_get):
 ])
 def test_get_runs_run_id(api_with_mock_get, run_id):
     assert api_with_mock_get.get_runs_run_id(run_id) == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.RUNS_RUN_ID.format(run_id=run_id))
+    api_with_mock_get._get.assert_called_once_with(Paths.RUNS_RUN_ID.format(run_id=run_id))
 
 
 @pytest.mark.parametrize('run_id', [
@@ -164,7 +189,7 @@ def test_get_runs_run_id(api_with_mock_get, run_id):
 ])
 def test_get_runs_run_id_commands(api_with_mock_get, run_id):
     assert api_with_mock_get.get_runs_run_id_commands(run_id) == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.RUNS_RUN_ID_COMMANDS.format(run_id=run_id))
+    api_with_mock_get._get.assert_called_once_with(Paths.RUNS_RUN_ID_COMMANDS.format(run_id=run_id))
 
 
 @pytest.mark.parametrize('run_id, command_id', [
@@ -173,7 +198,7 @@ def test_get_runs_run_id_commands(api_with_mock_get, run_id):
 ])
 def test_get_runs_run_id_commands_command_id(api_with_mock_get, run_id, command_id):
     assert api_with_mock_get.get_runs_run_id_commands_command_id(run_id, command_id) == RESPONSE
-    api_with_mock_get._get.assert_called_with(
+    api_with_mock_get._get.assert_called_once_with(
         Paths.RUNS_RUN_ID_COMMANDS_COMMAND_ID.format(run_id=run_id, command_id=command_id)
     )
 
@@ -184,12 +209,12 @@ def test_get_runs_run_id_commands_command_id(api_with_mock_get, run_id, command_
 ])
 def test_post_runs_run_id_actions(api_with_mock_post, run_id, data):
     assert api_with_mock_post.post_runs_run_id_actions(run_id, data) == RESPONSE
-    api_with_mock_post._post.assert_called_with(Paths.RUNS_RUN_ID_ACTIONS.format(run_id=run_id), json.dumps(data))
+    api_with_mock_post._post.assert_called_once_with(Paths.RUNS_RUN_ID_ACTIONS.format(run_id=run_id), json.dumps(data))
 
 
 def test_get_protocols(api_with_mock_get):
     assert api_with_mock_get.get_protocols() == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.PROTOCOLS)
+    api_with_mock_get._get.assert_called_once_with(Paths.PROTOCOLS)
 
 
 @pytest.mark.parametrize('files', [
@@ -198,13 +223,13 @@ def test_get_protocols(api_with_mock_get):
 ])
 def test_post_protocols(api_with_mock_post, files):
     assert api_with_mock_post.post_protocols(files) == RESPONSE
-    api_with_mock_post._post.assert_called_with(Paths.PROTOCOLS, files=[('files', f) for f in files])
+    api_with_mock_post._post.assert_called_once_with(Paths.PROTOCOLS, files=[('files', f) for f in files])
 
 
 @pytest.mark.parametrize('protocol_id', [
     'protocol_id_1',
-    'protocol_id_2'
+    'protocol_id_2',
 ])
 def test_get_protocols_protocol_id(api_with_mock_get, protocol_id):
     assert api_with_mock_get.get_protocols_protocol_id(protocol_id) == RESPONSE
-    api_with_mock_get._get.assert_called_with(Paths.PROTOCOLS_PROTOCOL_ID.format(protocol_id=protocol_id))
+    api_with_mock_get._get.assert_called_once_with(Paths.PROTOCOLS_PROTOCOL_ID.format(protocol_id=protocol_id))
