@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opentrons-http-api"
-version = "0.2.1"
+version = "0.2.2"
 description = "Python client for the Opentrons HTTP API (https://github.com/Opentrons/opentrons-integration-tools/tree/main/http-api)"
 authors = ["morefigs"]
 readme = "README.md"
