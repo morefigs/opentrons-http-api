@@ -27,7 +27,6 @@ class Paths:
     MOTORS_DISENGAGE = '/motors/disengage'
 
     # CAMERA
-    CAMERA_PICTURE = '/camera/picture'
 
     # LOGS
 

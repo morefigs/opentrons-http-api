@@ -1,10 +1,41 @@
-from typing import Sequence, BinaryIO
-import json
+from typing import Sequence, BinaryIO, Dict, Optional
 import urllib
+from enum import Enum
 
 import requests
 
 from opentrons_http_api.paths import Paths
+
+
+class SettingId(str, Enum):
+    SHORT_FIXED_TRASH = 'shortFixedTrash'
+    DECK_CALIBRATION_DOTS = 'deckCalibrationDots'
+    DISABLE_HOME_ON_BOOT = 'disableHomeOnBoot'
+    USE_OLD_ASPIRATION_FUNCTIONS = 'useOldAspirationFunctions'
+    ENABLE_DOOR_SAFETY_SWITCH = 'enableDoorSafetySwitch'
+    DISABLE_FAST_PROTOCOL_UPLOAD = 'disableFastProtocolUpload'
+
+
+class Axis(str, Enum):
+    X = 'x'
+    Y = 'y'
+    Z_L = 'z_l'
+    Z_R = 'z_r'
+    Z_G = 'z_g'
+    P_L = 'p_l'
+    P_R = 'p_r'
+    Q = 'q'
+    G = 'g'
+    Z = 'z'
+    A = 'a'
+    B = 'b'
+    C = 'c'
+
+
+class ActionType(str, Enum):
+    PLAY = 'play'
+    PAUSE = 'pause'
+    STOP = 'stop'
 
 
 class API:
@@ -22,18 +53,25 @@ class API:
     def _check_response(response: requests.Response):
         response.raise_for_status()
 
-    def _get(self, path: str) -> requests.Response:
+    def _get(self, path: str) -> Dict:
+        """
+        :param path: Path to call (not the full URL).
+        :return: The requests.Response object.
+        """
         response = requests.get(self._url(path), headers=self._HEADERS)
         self._check_response(response)
-        return response
+        return response.json()
 
-    def _post(self, path: str, data=None, **kwargs) -> requests.Response:
-        if data is not None:
-            data = json.dumps(data)
-
-        response = requests.post(self._url(path), data, headers=self._HEADERS, **kwargs)
+    def _post(self, path: str, params: Optional[Dict] = None, json: Optional[Dict] = None, **kwargs) -> Dict:
+        """
+        :param path: Path to call (not the full URL).
+        :param json: A JSON serializable Python object to send in the body of the request.
+        :param kwargs: Any specific kwargs to send, e.g. "files".
+        :return: The requests.Response object.
+        """
+        response = requests.post(self._url(path), headers=self._HEADERS, params=params, json=json, **kwargs)
         self._check_response(response)
-        return response
+        return response.json()
 
     # v1
 
@@ -41,42 +79,42 @@ class API:
 
     # CONTROL
 
-    def post_identify(self, seconds: int) -> requests.Response:
+    def post_identify(self, seconds: int) -> Dict:
         """
         Blink the OT-2's gantry lights so you can pick it out of a crowd.
         """
-        data = {'seconds': seconds}
-        return self._post(Paths.IDENTIFY, data)
+        params = {'seconds': seconds}
+        return self._post(Paths.IDENTIFY, params=params)
 
-    def get_robot_lights(self) -> requests.Response:
+    def get_robot_lights(self) -> Dict:
         """
         Get the current status of the OT-2's rail lights.
         """
         return self._get(Paths.ROBOT_LIGHTS)
 
-    def post_robot_lights(self, on: bool) -> requests.Response:
+    def post_robot_lights(self, on: bool) -> Dict:
         """
         Turn the rail lights on or off.
         """
-        data = {'on': on}
-        return self._post(Paths.ROBOT_LIGHTS, data)
+        body = {'on': on}
+        return self._post(Paths.ROBOT_LIGHTS, json=body)
 
     # SETTINGS
 
-    def get_settings(self) -> requests.Response:
+    def get_settings(self) -> Dict:
         """
         Get a list of available advanced settings (feature flags) and their values.
         """
         return self._get(Paths.SETTINGS)
 
-    def post_settings(self, id_: str, value: bool):
+    def post_settings(self, id_: SettingId, value: bool) -> Dict:
         """
         Change an advanced setting (feature flag).
         """
-        data = {'id': id_, 'value': value}
-        return self._post(Paths.SETTINGS, data)
+        body = {'id': id_, 'value': value}
+        return self._post(Paths.SETTINGS, json=body)
 
-    def get_robot_settings(self) -> requests.Response:
+    def get_robot_settings(self) -> Dict:
         """
         Get the current robot config.
         """
@@ -84,7 +122,7 @@ class API:
 
     # DECK CALIBRATION
 
-    def get_calibration_status(self) -> requests.Response:
+    def get_calibration_status(self) -> Dict:
         """
         Get the calibration status.
         """
@@ -96,32 +134,26 @@ class API:
 
     # MOTORS
 
-    def get_motors_engaged(self) -> requests.Response:
+    def get_motors_engaged(self) -> Dict:
         """
         Query which motors are engaged and holding.
         """
         return self._get(Paths.MOTORS_ENGAGED)
 
-    def post_motors_disengage(self, axes: Sequence[str]) -> requests.Response:
+    def post_motors_disengage(self, axes: Sequence[Axis]) -> Dict:
         """
         Disengage a motor or set of motors.
         """
-        data = {'axes': axes}
-        return self._post(Paths.MOTORS_DISENGAGE, data)
+        body = {'axes': axes}
+        return self._post(Paths.MOTORS_DISENGAGE, json=body)
 
     # CAMERA
-
-    def get_camera_picture(self) -> requests.Response:
-        """
-        Capture an image from the OT-2's on-board camera and return it.
-        """
-        return self._get(Paths.CAMERA_PICTURE)
 
     # LOGS
 
     # HEALTH
 
-    def get_health(self) -> requests.Response:
+    def get_health(self) -> Dict:
         """
         Get information about the health of the robot server.
 
@@ -132,56 +164,74 @@ class API:
 
     # RUN MANAGEMENT
 
-    def get_runs(self) -> requests.Response:
+    def get_runs(self) -> Dict:
         """
         Get a list of all active and inactive runs.
         """
         return self._get(Paths.RUNS)
 
-    def post_runs(self, data: dict) -> requests.Response:
+    def post_runs(self, protocol_id: str, labware_offsets: Optional[Sequence[dict]] = None) -> Dict:
         """
         Create a new run to track robot interaction.
 
         When too many runs already exist, old ones will be automatically deleted to make room for the new one.
         """
-        return self._post(Paths.RUNS, data)
+        if labware_offsets is None:
+            labware_offsets = []
 
-    def get_runs_run_id(self, run_id: str) -> requests.Response:
+        body = {
+            'data': {
+                'protocolId': protocol_id,
+                'labwareOffsets': labware_offsets,
+            }
+        }
+        return self._post(Paths.RUNS, json=body)
+
+    def get_runs_run_id(self, run_id: str) -> Dict:
         """
         Get a specific run by its unique identifier.
         """
-        return self._get(Paths.RUNS_RUN_ID.format(run_id=run_id))
+        path = Paths.RUNS_RUN_ID.format(run_id=run_id)
+        return self._get(path)
 
-    def get_runs_run_id_commands(self, run_id: str) -> requests.Response:
+    def get_runs_run_id_commands(self, run_id: str) -> Dict:
         """
         Get a list of all commands in the run and their statuses. This endpoint returns command summaries. Use GET
         /runs/{runId}/commands/{commandId} to get all information available for a given command.
         """
-        return self._get(Paths.RUNS_RUN_ID_COMMANDS.format(run_id=run_id))
+        path = Paths.RUNS_RUN_ID_COMMANDS.format(run_id=run_id)
+        return self._get(path)
 
-    def get_runs_run_id_commands_command_id(self, run_id: str, command_id: str) -> requests.Response:
+    def get_runs_run_id_commands_command_id(self, run_id: str, command_id: str) -> Dict:
         """
         Get a command along with any associated payload, result, and execution information.
         """
-        return self._get(Paths.RUNS_RUN_ID_COMMANDS_COMMAND_ID.format(run_id=run_id, command_id=command_id))
+        path = Paths.RUNS_RUN_ID_COMMANDS_COMMAND_ID.format(run_id=run_id, command_id=command_id)
+        return self._get(path)
 
-    def post_runs_run_id_actions(self, run_id: str, data: dict) -> requests.Response:
+    def post_runs_run_id_actions(self, run_id: str, action: ActionType) -> Dict:
         """
         Provide an action in order to control execution of the run.
         """
-        return self._post(Paths.RUNS_RUN_ID_ACTIONS.format(run_id=run_id), data)
+        path = Paths.RUNS_RUN_ID_ACTIONS.format(run_id=run_id)
+        body = {
+            'data': {
+                'actionType': action
+            }
+        }
+        return self._post(path, json=body)
 
     # MAINTENANCE RUN MANAGEMENT
 
     # PROTOCOL MANAGEMENT
 
-    def get_protocols(self) -> requests.Response:
+    def get_protocols(self) -> Dict:
         """
         Get a list of all currently uploaded protocols.
         """
         return self._get(Paths.PROTOCOLS)
 
-    def post_protocols(self, files: Sequence[BinaryIO]) -> requests.Response:
+    def post_protocols(self, protocol_file: BinaryIO, labware_definitions: Optional[Sequence[BinaryIO]] = None) -> Dict:
         """
         Upload a protocol to your device. You may include the following files:
 
@@ -191,14 +241,16 @@ class API:
         When too many protocols already exist, old ones will be automatically deleted to make room for the new one. A
         protocol will never be automatically deleted if there's a run referring to it, though.
         """
-        files = [('files', f) for f in files]
-        return self._post(Paths.PROTOCOLS, files=files)
+        all_files = (protocol_file, ) if labware_definitions is None else (protocol_file, *labware_definitions)
+        body = [('files', f) for f in all_files]
+        return self._post(Paths.PROTOCOLS, files=body)
 
-    def get_protocols_protocol_id(self, protocol_id: str) -> requests.Response:
+    def get_protocols_protocol_id(self, protocol_id: str) -> Dict:
         """
         Get an uploaded protocol by ID.
         """
-        return self._get(Paths.PROTOCOLS_PROTOCOL_ID.format(protocol_id=protocol_id))
+        path = Paths.PROTOCOLS_PROTOCOL_ID.format(protocol_id=protocol_id)
+        return self._get(path)
 
     # SIMPLE COMMANDS
 
