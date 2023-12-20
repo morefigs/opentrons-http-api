@@ -62,14 +62,15 @@ class API:
         self._check_response(response)
         return response.json()
 
-    def _post(self, path: str, params: Optional[Dict] = None, json: Optional[Dict] = None, **kwargs) -> Dict:
+    def _post(self, path: str, query: Optional[Dict] = None, body: Optional[Dict] = None, **kwargs) -> Dict:
         """
         :param path: Path to call (not the full URL).
-        :param json: A JSON serializable Python object to send in the body of the request.
+        :param query: Parameters to use as a query.
+        :param body: A JSON serializable Python object to send in the body of the request.
         :param kwargs: Any specific kwargs to send, e.g. "files".
         :return: The requests.Response object.
         """
-        response = requests.post(self._url(path), headers=self._HEADERS, params=params, json=json, **kwargs)
+        response = requests.post(self._url(path), headers=self._HEADERS, params=query, json=body, **kwargs)
         self._check_response(response)
         return response.json()
 
@@ -83,8 +84,8 @@ class API:
         """
         Blink the OT-2's gantry lights so you can pick it out of a crowd.
         """
-        params = {'seconds': seconds}
-        return self._post(Paths.IDENTIFY, params=params)
+        query = {'seconds': seconds}
+        return self._post(Paths.IDENTIFY, query=query)
 
     def get_robot_lights(self) -> Dict:
         """
@@ -97,7 +98,7 @@ class API:
         Turn the rail lights on or off.
         """
         body = {'on': on}
-        return self._post(Paths.ROBOT_LIGHTS, json=body)
+        return self._post(Paths.ROBOT_LIGHTS, body=body)
 
     # SETTINGS
 
@@ -112,7 +113,7 @@ class API:
         Change an advanced setting (feature flag).
         """
         body = {'id': id_, 'value': value}
-        return self._post(Paths.SETTINGS, json=body)
+        return self._post(Paths.SETTINGS, body=body)
 
     def get_robot_settings(self) -> Dict:
         """
@@ -145,7 +146,7 @@ class API:
         Disengage a motor or set of motors.
         """
         body = {'axes': axes}
-        return self._post(Paths.MOTORS_DISENGAGE, json=body)
+        return self._post(Paths.MOTORS_DISENGAGE, body=body)
 
     # CAMERA
 
@@ -185,7 +186,7 @@ class API:
                 'labwareOffsets': labware_offsets,
             }
         }
-        return self._post(Paths.RUNS, json=body)
+        return self._post(Paths.RUNS, body=body)
 
     def get_runs_run_id(self, run_id: str) -> Dict:
         """
@@ -219,7 +220,7 @@ class API:
                 'actionType': action
             }
         }
-        return self._post(path, json=body)
+        return self._post(path, body=body)
 
     # MAINTENANCE RUN MANAGEMENT
 
@@ -242,8 +243,8 @@ class API:
         protocol will never be automatically deleted if there's a run referring to it, though.
         """
         all_files = (protocol_file, ) if labware_definitions is None else (protocol_file, *labware_definitions)
-        body = [('files', f) for f in all_files]
-        return self._post(Paths.PROTOCOLS, files=body)
+        files = [('files', f) for f in all_files]
+        return self._post(Paths.PROTOCOLS, files=files)
 
     def get_protocols_protocol_id(self, protocol_id: str) -> Dict:
         """
