@@ -1,4 +1,4 @@
-from wip.robot import Robot, ActionType
+from opentrons_http_api.robot import Robot, ActionType
 
 
 ROBOT_IP = 'localhost'
@@ -15,3 +15,6 @@ run_info = robot.create_run(protocol_info.id)
 
 # Start the run
 robot.action_run(run_info.id, ActionType.PLAY)
+
+print(protocol_info)
+print(type(protocol_info))

@@ -1,4 +1,4 @@
-from wip.robot import Robot
+from opentrons_http_api.robot import Robot
 
 
 ROBOT_IP = 'localhost'
