@@ -35,6 +35,9 @@ def parameterize_protocol(f_in: BinaryIO, f_out: BinaryIO, params: Sequence[Para
     :param f_out: The output protocol file with parameters inserted.
     :param params: The parameter names and values to replace.
     """
+    if f_in is f_out:
+        raise ValueError("f_in and f_out can't be the same")
+
     contents = f_in.read()
 
     for param in params:
