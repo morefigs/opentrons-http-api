@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Tuple, BinaryIO, Optional, Sequence
+from typing import Tuple, BinaryIO, Optional, Sequence
 
 from opentrons_http_api.api import API, SettingId, ActionType
 from opentrons_http_api.robot_info import SettingsInfo, RobotSettingsInfo, HealthInfo, RunInfo, ProtocolInfo

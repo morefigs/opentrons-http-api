@@ -2,7 +2,7 @@ from opentrons import protocol_api
 
 
 metadata = {
-    'protocolName': 'Turn rail lights on',
+    'protocolName': 'Example protocol',
     'author': 'morefigs',
     'description': 'Turns the rail lights of the OT-2 on',
 }
