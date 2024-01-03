@@ -4,3 +4,4 @@ build/
 .DS_Store
 .python-version
 poetry.lock
+/examples/robot/_temp.py
