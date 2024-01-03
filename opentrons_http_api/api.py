@@ -117,7 +117,7 @@ class API:
         """
         Change an advanced setting (feature flag).
         """
-        body = {'id': id_, 'value': value}
+        body = {'id': id_.value, 'value': value}
         return self._post(Paths.SETTINGS, body=body)
 
     def get_robot_settings(self) -> Dict:
@@ -222,7 +222,7 @@ class API:
         path = Paths.RUNS_RUN_ID_ACTIONS.format(run_id=run_id)
         body = {
             'data': {
-                'actionType': action
+                'actionType': action.value
             }
         }
         return self._post(path, body=body)
