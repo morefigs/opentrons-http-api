@@ -15,3 +15,6 @@ run_info = robot.create_run(protocol_info.id)
 
 # Start the run
 robot.action_run(run_info.id, Action.PLAY)
+
+# Check run status
+print(robot.run(run_info.id).status)

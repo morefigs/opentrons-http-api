@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 
 class _Info(ABC):
@@ -70,6 +70,8 @@ class RunInfo(_Info):
     liquids: List[dict]
     labwareOffsets: List[dict]
     protocolId: str
+    completedAt: Optional[str] = None
+    startedAt: Optional[str] = None
 
 
 @dataclass(frozen=True)

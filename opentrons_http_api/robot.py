@@ -41,6 +41,10 @@ class Robot:
         d = self._api.post_runs(protocol_id, labware_offsets)
         return RunInfo.from_dict(d['data'])
 
+    def run(self, run_id: str) -> RunInfo:
+        d = self._api.get_runs_run_id(run_id)
+        return RunInfo.from_dict(d['data'])
+
     def action_run(self, run_id: str, action: Action) -> None:
         self._api.post_runs_run_id_actions(run_id, action)
 
