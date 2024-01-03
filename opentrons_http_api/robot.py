@@ -37,6 +37,10 @@ class Robot:
         info = self._api.get_health()
         return HealthInfo.from_dict(info)
 
+    def runs(self) -> Tuple[RunInfo, ...]:
+        ds = self._api.get_runs()
+        return tuple(RunInfo.from_dict(d) for d in ds['data'])
+
     def create_run(self, protocol_id: str, labware_offsets: Optional[Sequence[dict]] = None) -> RunInfo:
         d = self._api.post_runs(protocol_id, labware_offsets)
         return RunInfo.from_dict(d['data'])
