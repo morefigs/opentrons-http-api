@@ -3,6 +3,9 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Paths:
+    """
+    HTTP API paths.
+    """
     # v1
 
     # NETWORKING

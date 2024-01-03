@@ -6,6 +6,9 @@ from opentrons_http_api.robot_info import SettingsInfo, RobotSettingsInfo, Healt
 
 
 class Robot:
+    """
+    A friendlier interface for the Opentrons HTTP API.
+    """
     def __init__(self, host: str = 'localhost'):
         self._api = API(host)
 

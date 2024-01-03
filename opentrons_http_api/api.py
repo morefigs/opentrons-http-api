@@ -39,6 +39,11 @@ class ActionType(str, Enum):
 
 
 class API:
+    """
+    Basic Python client for Opentrons HTTP API.
+
+    Use the Robot class for a friendlier interface.
+    """
     _HEADERS = {'Opentrons-Version': '3'}
     _PORT = 31950
     _BASE = 'http://{host}:{port}'
@@ -56,7 +61,7 @@ class API:
     def _get(self, path: str) -> Dict:
         """
         :param path: Path to call (not the full URL).
-        :return: The requests.Response object.
+        :return: The response as a dictionary.
         """
         response = requests.get(self._url(path), headers=self._HEADERS)
         self._check_response(response)
@@ -68,7 +73,7 @@ class API:
         :param query: Parameters to use as a query.
         :param body: A JSON serializable Python object to send in the body of the request.
         :param kwargs: Any specific kwargs to send, e.g. "files".
-        :return: The requests.Response object.
+        :return: The response as a dictionary.
         """
         response = requests.post(self._url(path), headers=self._HEADERS, params=query, json=body, **kwargs)
         self._check_response(response)
