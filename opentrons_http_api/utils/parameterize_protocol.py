@@ -27,18 +27,18 @@ class Parameter:
         return f'{self.value}'.encode()
 
 
-def parameterize_protocol(f_in: BinaryIO, f_out: BinaryIO, params: Sequence[Parameter]) -> None:
+def parameterize_protocol(buffer_in: BinaryIO, buffer_out: BinaryIO, params: Sequence[Parameter]) -> None:
     """
     Replaces parameter tokens with their values in a protocol file binary object as a means of dynamically enabling
     parameters to be injected into an otherwise fixed parameter file.
-    :param f_in: The protocol file to insert parameters into.
-    :param f_out: The output protocol file with parameters inserted.
+    :param buffer_in: The protocol file to insert parameters into.
+    :param buffer_out: The output protocol file with parameters inserted.
     :param params: The parameter names and values to replace.
     """
-    if f_in is f_out:
+    if buffer_in is buffer_out:
         raise ValueError("f_in and f_out can't be the same")
 
-    contents = f_in.read()
+    contents = buffer_in.read()
 
     for param in params:
         # Check exactly one of each token exists
@@ -49,5 +49,5 @@ def parameterize_protocol(f_in: BinaryIO, f_out: BinaryIO, params: Sequence[Para
         # Replace parameter tokens
         contents = contents.replace(param.full_name_b, param.value_b)
 
-    f_out.write(contents)
-    f_out.seek(0)
+    buffer_out.write(contents)
+    buffer_out.seek(0)
