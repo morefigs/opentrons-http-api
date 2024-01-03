@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Tuple, BinaryIO, Optional, Sequence
 
-from opentrons_http_api.api import API, SettingId, ActionType
+from opentrons_http_api.api import API, SettingId, Action
 from opentrons_http_api.robot_info import SettingsInfo, RobotSettingsInfo, HealthInfo, RunInfo, ProtocolInfo
 
 
@@ -41,7 +41,7 @@ class Robot:
         d = self._api.post_runs(protocol_id, labware_offsets)
         return RunInfo.from_dict(d['data'])
 
-    def action_run(self, run_id: str, action: ActionType) -> None:
+    def action_run(self, run_id: str, action: Action) -> None:
         self._api.post_runs_run_id_actions(run_id, action)
 
     def upload_protocol(self, protocol_file: BinaryIO,

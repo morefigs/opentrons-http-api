@@ -5,7 +5,7 @@ than real hardware. This will change the state of the hardware.
 """
 import pytest
 
-from opentrons_http_api.api import API, SettingId, Axis, ActionType
+from opentrons_http_api.api import API, SettingId, Axis, Action
 
 
 # Host of a real or simulated device
@@ -45,4 +45,4 @@ def test_api_on_hardware(api: API):
     d = api.get_runs_run_id_commands(run_id=run_id)
     command_id = d['data'][0]['id']
     api.get_runs_run_id_commands_command_id(run_id=run_id, command_id=command_id)
-    api.post_runs_run_id_actions(run_id=run_id, action=ActionType.STOP)
+    api.post_runs_run_id_actions(run_id=run_id, action=Action.STOP)

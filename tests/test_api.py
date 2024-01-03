@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 from requests import Response
 
-from opentrons_http_api.api import API, SettingId, Axis, ActionType
+from opentrons_http_api.api import API, SettingId, Axis, Action
 from opentrons_http_api.paths import Paths
 
 
@@ -41,8 +41,8 @@ def test_axis():
 
 
 def test_action_type():
-    ActionType('play')
-    ActionType.PLAY
+    Action('play')
+    Action.PLAY
 
 
 def test_cls(api):
@@ -157,8 +157,8 @@ def test_get_methods(api_with_mock_get: API, method: Callable, path: str, path_k
     ),
     (
             API.post_runs_run_id_actions, Paths.RUNS_RUN_ID_ACTIONS, {'run_id': 'run_123'},
-            {'action': ActionType.PLAY},
-            {'body': {'data': {'actionType': ActionType.PLAY}}},
+            {'action': Action.PLAY},
+            {'body': {'data': {'actionType': Action.PLAY}}},
     ),
     (
             API.post_protocols, Paths.PROTOCOLS, {},

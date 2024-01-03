@@ -32,7 +32,7 @@ class Axis(str, Enum):
     C = 'c'
 
 
-class ActionType(str, Enum):
+class Action(str, Enum):
     PLAY = 'play'
     PAUSE = 'pause'
     STOP = 'stop'
@@ -215,7 +215,7 @@ class API:
         path = Paths.RUNS_RUN_ID_COMMANDS_COMMAND_ID.format(run_id=run_id, command_id=command_id)
         return self._get(path)
 
-    def post_runs_run_id_actions(self, run_id: str, action: ActionType) -> Dict:
+    def post_runs_run_id_actions(self, run_id: str, action: Action) -> Dict:
         """
         Provide an action in order to control execution of the run.
         """
