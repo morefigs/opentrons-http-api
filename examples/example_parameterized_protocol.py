@@ -4,7 +4,7 @@ from opentrons import protocol_api
 metadata = {
     'protocolName': 'Example parameterized protocol',
     'author': 'morefigs',
-    'description': 'A protocol with injectable parameters',
+    'description': 'A protocol with replaceable parameters',
 }
 
 requirements = {'robotType': 'OT-2', 'apiLevel': '2.15'}

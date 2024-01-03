@@ -11,9 +11,9 @@ PARAMS = (
 
 robot = Robot(ROBOT_IP)
 
-# Doesn't work with f_out as a BytesIO or tempfile object
-with open('_temp.py', 'w+b') as f_out:
-    with open('../example_protocol_parameterized.py', 'rb') as f_in:
-        parameterize_protocol(f_in, f_out, PARAMS)
+# Doesn't work with buffer_out as a BytesIO or tempfile object
+with open('_temp.py', 'w+b') as buffer_out:
+    with open('../example_parameterized_protocol.py', 'rb') as buffer_in:
+        parameterize_protocol(buffer_in, buffer_out, PARAMS)
 
-    print(robot.upload_protocol(f_out))
+    print(robot.upload_protocol(buffer_out))

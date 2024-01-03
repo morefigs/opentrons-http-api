@@ -31,12 +31,12 @@ def parameterize_protocol(buffer_in: BinaryIO, buffer_out: BinaryIO, params: Seq
     """
     Replaces parameter tokens with their values in a protocol file binary object as a means of dynamically enabling
     parameters to be injected into an otherwise fixed parameter file.
-    :param buffer_in: The protocol file to insert parameters into.
-    :param buffer_out: The output protocol file with parameters inserted.
+    :param buffer_in: The protocol file buffer to insert parameters into.
+    :param buffer_out: The output protocol file buffer with parameters injected.
     :param params: The parameter names and values to replace.
     """
     if buffer_in is buffer_out:
-        raise ValueError("f_in and f_out can't be the same")
+        raise ValueError("buffer_in and buffer_out can't be the same")
 
     contents = buffer_in.read()
 
