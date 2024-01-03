@@ -1,4 +1,4 @@
-from opentrons_http_api.robot import Robot, ActionType
+from opentrons_http_api.robot import Robot, Action
 
 
 ROBOT_IP = 'localhost'
@@ -14,4 +14,4 @@ with open('../example_protocol.py', 'rb') as f:
 run_info = robot.create_run(protocol_info.id)
 
 # Start the run
-robot.action_run(run_info.id, ActionType.PLAY)
+robot.action_run(run_info.id, Action.PLAY)
