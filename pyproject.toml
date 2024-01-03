@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opentrons-http-api"
-version = "0.2.3"
+version = "0.2.4"
 description = "Python client for the Opentrons HTTP API (https://github.com/Opentrons/opentrons-integration-tools/tree/main/http-api)"
 authors = ["morefigs"]
 readme = "README.md"
@@ -16,4 +16,3 @@ pytest = "^7.4.3"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
