@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from opentrons_http_api.infos import SettingsInfo, RobotSettingsInfo, HealthInfo, RunInfo, ProtocolInfo
+from opentrons_http_api.defs.infos import SettingsInfo, RobotSettingsInfo, HealthInfo, RunInfo, ProtocolInfo
 
 
 @pytest.fixture

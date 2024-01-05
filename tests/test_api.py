@@ -5,7 +5,7 @@ import pytest
 from requests import Response
 
 from opentrons_http_api.api import API
-from opentrons_http_api.paths import Paths
+from opentrons_http_api.defs.paths import Paths
 
 
 RESPONSE = {'response': 'response'}

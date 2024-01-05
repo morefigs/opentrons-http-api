@@ -2,8 +2,8 @@ from __future__ import annotations
 from typing import Tuple, BinaryIO, Optional, Sequence
 
 from opentrons_http_api.api import API
-from opentrons_http_api.infos import SettingsInfo, RobotSettingsInfo, HealthInfo, RunInfo, ProtocolInfo
-from opentrons_http_api.enums import SettingId, Action
+from opentrons_http_api.defs.infos import SettingsInfo, RobotSettingsInfo, HealthInfo, RunInfo, ProtocolInfo
+from opentrons_http_api.defs.enums import SettingId, Action
 
 
 class Robot:

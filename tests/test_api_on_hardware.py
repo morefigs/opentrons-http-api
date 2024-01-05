@@ -6,7 +6,7 @@ than real hardware. This will change the state of the hardware.
 import pytest
 
 from opentrons_http_api.api import API
-from opentrons_http_api.enums import SettingId, Axis, Action
+from opentrons_http_api.defs.enums import SettingId, Axis, Action
 
 
 # Host of a real or simulated device

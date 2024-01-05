@@ -3,7 +3,7 @@ import urllib
 
 import requests
 
-from opentrons_http_api.paths import Paths
+from opentrons_http_api.defs.paths import Paths
 
 
 class API:

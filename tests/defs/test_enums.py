@@ -1,4 +1,4 @@
-from opentrons_http_api.enums import SettingId, Axis, Action
+from opentrons_http_api.defs.enums import SettingId, Axis, Action
 
 
 def test_setting_id():
