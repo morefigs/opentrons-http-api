@@ -24,7 +24,7 @@ class Robot:
 
     def settings(self) -> Tuple[SettingsInfo, ...]:
         d = self._api.get_settings()
-        return tuple(SettingsInfo.from_dict(setting)
+        return tuple(SettingsInfo(**setting)
                      for setting in d['settings'])
 
     def set_setting(self, id_: SettingId, value: bool) -> None:
@@ -32,15 +32,16 @@ class Robot:
 
     def robot_settings(self) -> RobotSettingsInfo:
         d = self._api.get_robot_settings()
-        return RobotSettingsInfo.from_dict(d)
+        return RobotSettingsInfo(**d)
 
     def health(self) -> HealthInfo:
         info = self._api.get_health()
-        return HealthInfo.from_dict(info)
+        return HealthInfo(**info)
 
     def runs(self) -> Tuple[RunInfo, ...]:
-        ds = self._api.get_runs()
-        return tuple(RunInfo.from_dict(d) for d in ds['data'])
+        d = self._api.get_runs()
+        return tuple(RunInfo(**run_info)
+                     for run_info in d['data'])
 
     def create_run(self, protocol_id: str, labware_offsets: Optional[Sequence[dict]] = None) -> RunInfo:
         if labware_offsets is None:
@@ -51,11 +52,11 @@ class Robot:
             'labwareOffsets': labware_offsets,
         }
         d = self._api.post_runs(data)
-        return RunInfo.from_dict(d['data'])
+        return RunInfo(**d['data'])
 
     def run(self, run_id: str) -> RunInfo:
         d = self._api.get_runs_run_id(run_id)
-        return RunInfo.from_dict(d['data'])
+        return RunInfo(**d['data'])
 
     def action_run(self, run_id: str, action: Action) -> None:
         data = {
@@ -75,4 +76,4 @@ class Robot:
         files = (protocol_file, ) if labware_definitions is None else (protocol_file, *labware_definitions)
 
         d = self._api.post_protocols(files)
-        return ProtocolInfo.from_dict(d['data'])
+        return ProtocolInfo(**d['data'])

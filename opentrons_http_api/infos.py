@@ -1,20 +1,10 @@
 from __future__ import annotations
-from abc import ABC
 from dataclasses import dataclass
 from typing import List, Dict, Optional
 
 
-class _Info(ABC):
-    def __init__(self, args, kwargs):
-        pass
-
-    @classmethod
-    def from_dict(cls, d: dict) -> _Info:
-        return cls(**d)
-
-
 @dataclass(frozen=True)
-class SettingsInfo(_Info):
+class SettingsInfo:
     id: str
     old_id: str
     title: str
@@ -24,7 +14,7 @@ class SettingsInfo(_Info):
 
 
 @dataclass(frozen=True)
-class RobotSettingsInfo(_Info):
+class RobotSettingsInfo:
     model: str
     name: str
     version: int
@@ -42,7 +32,7 @@ class RobotSettingsInfo(_Info):
 
 
 @dataclass(frozen=True)
-class HealthInfo(_Info):
+class HealthInfo:
     name: str
     robot_model: str
     api_version: str
@@ -57,7 +47,7 @@ class HealthInfo(_Info):
 
 
 @dataclass(frozen=True)
-class RunInfo(_Info):
+class RunInfo:
     id: str
     createdAt: str
     status: str
@@ -75,7 +65,7 @@ class RunInfo(_Info):
 
 
 @dataclass(frozen=True)
-class ProtocolInfo(_Info):
+class ProtocolInfo:
     id: str
     createdAt: str
     files: List[Dict]
