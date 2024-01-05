@@ -4,6 +4,8 @@ Python client for the Opentrons HTTP API (https://github.com/Opentrons/opentrons
 
 ## Installation
 
+Install from [PyPI](https://pypi.org/project/opentrons-http-api/):
+
 ```shell
 pip install opentrons-http-api
 ```
