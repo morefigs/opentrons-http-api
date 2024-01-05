@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 from requests import Response
 
-from opentrons_http_api.api import API, SettingId, Axis, Action
+from opentrons_http_api.api import API
 from opentrons_http_api.paths import Paths
 
 
@@ -28,21 +28,6 @@ def api_with_mock_post(api):
     with patch.object(api, '_post') as mock_post:
         mock_post.return_value = RESPONSE
         yield api
-
-
-def test_setting_id():
-    SettingId('shortFixedTrash')
-    SettingId.SHORT_FIXED_TRASH
-
-
-def test_axis():
-    Axis('x')
-    Axis.X
-
-
-def test_action_type():
-    Action('play')
-    Action.PLAY
 
 
 def test_cls(api):
@@ -142,28 +127,29 @@ def test_get_methods(api_with_mock_get: API, method: Callable, path: str, path_k
     ),
     (
             API.post_settings, Paths.SETTINGS, {},
-            {'id_': SettingId.SHORT_FIXED_TRASH, 'value': True},
-            {'body': {'id': SettingId.SHORT_FIXED_TRASH, 'value': True}},
+            {'id_': 'id_123', 'value': True},
+            {'body': {'id': 'id_123', 'value': True}},
     ),
     (
             API.post_motors_disengage, Paths.MOTORS_DISENGAGE, {},
-            {'axes': [Axis.X, Axis.Y]},
-            {'body': {'axes': [Axis.X, Axis.Y]}},
+            {'axes': ['x', 'y']},
+            {'body': {'axes': ['x', 'y']}},
     ),
     (
-            API.post_runs, Paths.RUNS, {'protocol_id': 'protocol_123'},
-            {'labware_offsets': [{'labware': 'offsets'}]},
+            API.post_runs, Paths.RUNS, {},
+            {'data': {'protocolId': 'protocol_123', 'labwareOffsets': [{'labware': 'offsets'}]}},
             {'body': {'data': {'protocolId': 'protocol_123', 'labwareOffsets': [{'labware': 'offsets'}]}}},
     ),
     (
             API.post_runs_run_id_actions, Paths.RUNS_RUN_ID_ACTIONS, {'run_id': 'run_123'},
-            {'action': Action.PLAY},
-            {'body': {'data': {'actionType': Action.PLAY}}},
+            {'data': {'actionType': 'play'}},
+            {'body': {'data': {'actionType': 'play'}}},
     ),
     (
             API.post_protocols, Paths.PROTOCOLS, {},
-            {'protocol_file': b'file_contents'},
-            {'files': [('files', b'file_contents')]},
+            # Strictly these shouldn't be bytes
+            {'files': (b'file_1', b'file_2')},
+            {'files': (('files', b'file_1'), ('files', b'file_2'))},
     ),
 ])
 def test_post_methods(api_with_mock_post: API, method: Callable, path: str, path_kwargs: Dict, kwargs_in: Dict,
