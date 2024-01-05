@@ -1,40 +1,9 @@
-from typing import Sequence, BinaryIO, Dict, Optional
+from typing import Sequence, BinaryIO, Optional
 import urllib
 
 import requests
 
 from opentrons_http_api.paths import Paths
-
-
-class SettingId(str, Enum):
-    SHORT_FIXED_TRASH = 'shortFixedTrash'
-    DECK_CALIBRATION_DOTS = 'deckCalibrationDots'
-    DISABLE_HOME_ON_BOOT = 'disableHomeOnBoot'
-    USE_OLD_ASPIRATION_FUNCTIONS = 'useOldAspirationFunctions'
-    ENABLE_DOOR_SAFETY_SWITCH = 'enableDoorSafetySwitch'
-    DISABLE_FAST_PROTOCOL_UPLOAD = 'disableFastProtocolUpload'
-
-
-class Axis(str, Enum):
-    X = 'x'
-    Y = 'y'
-    Z_L = 'z_l'
-    Z_R = 'z_r'
-    Z_G = 'z_g'
-    P_L = 'p_l'
-    P_R = 'p_r'
-    Q = 'q'
-    G = 'g'
-    Z = 'z'
-    A = 'a'
-    B = 'b'
-    C = 'c'
-
-
-class Action(str, Enum):
-    PLAY = 'play'
-    PAUSE = 'pause'
-    STOP = 'stop'
 
 
 class API:
@@ -57,7 +26,7 @@ class API:
     def _check_response(response: requests.Response):
         response.raise_for_status()
 
-    def _get(self, path: str) -> Dict:
+    def _get(self, path: str) -> dict:
         """
         :param path: Path to call (not the full URL).
         :return: The response as a dictionary.
@@ -66,7 +35,7 @@ class API:
         self._check_response(response)
         return response.json()
 
-    def _post(self, path: str, query: Optional[Dict] = None, body: Optional[Dict] = None, **kwargs) -> Dict:
+    def _post(self, path: str, query: Optional[dict] = None, body: Optional[dict] = None, **kwargs) -> dict:
         """
         :param path: Path to call (not the full URL).
         :param query: Parameters to use as a query.
@@ -84,20 +53,20 @@ class API:
 
     # CONTROL
 
-    def post_identify(self, seconds: int) -> Dict:
+    def post_identify(self, seconds: int) -> dict:
         """
         Blink the OT-2's gantry lights so you can pick it out of a crowd.
         """
         query = {'seconds': seconds}
         return self._post(Paths.IDENTIFY, query=query)
 
-    def get_robot_lights(self) -> Dict:
+    def get_robot_lights(self) -> dict:
         """
         Get the current status of the OT-2's rail lights.
         """
         return self._get(Paths.ROBOT_LIGHTS)
 
-    def post_robot_lights(self, on: bool) -> Dict:
+    def post_robot_lights(self, on: bool) -> dict:
         """
         Turn the rail lights on or off.
         """
@@ -106,20 +75,20 @@ class API:
 
     # SETTINGS
 
-    def get_settings(self) -> Dict:
+    def get_settings(self) -> dict:
         """
         Get a list of available advanced settings (feature flags) and their values.
         """
         return self._get(Paths.SETTINGS)
 
-    def post_settings(self, id_: str, value: bool) -> Dict:
+    def post_settings(self, id_: str, value: bool) -> dict:
         """
         Change an advanced setting (feature flag).
         """
         body = {'id': id_, 'value': value}
         return self._post(Paths.SETTINGS, body=body)
 
-    def get_robot_settings(self) -> Dict:
+    def get_robot_settings(self) -> dict:
         """
         Get the current robot config.
         """
@@ -127,7 +96,7 @@ class API:
 
     # DECK CALIBRATION
 
-    def get_calibration_status(self) -> Dict:
+    def get_calibration_status(self) -> dict:
         """
         Get the calibration status.
         """
@@ -139,13 +108,13 @@ class API:
 
     # MOTORS
 
-    def get_motors_engaged(self) -> Dict:
+    def get_motors_engaged(self) -> dict:
         """
         Query which motors are engaged and holding.
         """
         return self._get(Paths.MOTORS_ENGAGED)
 
-    def post_motors_disengage(self, axes: Sequence[str]) -> Dict:
+    def post_motors_disengage(self, axes: Sequence[str]) -> dict:
         """
         Disengage a motor or set of motors.
         """
@@ -158,7 +127,7 @@ class API:
 
     # HEALTH
 
-    def get_health(self) -> Dict:
+    def get_health(self) -> dict:
         """
         Get information about the health of the robot server.
 
@@ -169,7 +138,7 @@ class API:
 
     # RUN MANAGEMENT
 
-    def get_runs(self) -> Dict:
+    def get_runs(self) -> dict:
         """
         Get a list of all active and inactive runs.
         """
@@ -184,14 +153,14 @@ class API:
         body = {'data': data}
         return self._post(Paths.RUNS, body=body)
 
-    def get_runs_run_id(self, run_id: str) -> Dict:
+    def get_runs_run_id(self, run_id: str) -> dict:
         """
         Get a specific run by its unique identifier.
         """
         path = Paths.RUNS_RUN_ID.format(run_id=run_id)
         return self._get(path)
 
-    def get_runs_run_id_commands(self, run_id: str) -> Dict:
+    def get_runs_run_id_commands(self, run_id: str) -> dict:
         """
         Get a list of all commands in the run and their statuses. This endpoint returns command summaries. Use GET
         /runs/{runId}/commands/{commandId} to get all information available for a given command.
@@ -199,7 +168,7 @@ class API:
         path = Paths.RUNS_RUN_ID_COMMANDS.format(run_id=run_id)
         return self._get(path)
 
-    def get_runs_run_id_commands_command_id(self, run_id: str, command_id: str) -> Dict:
+    def get_runs_run_id_commands_command_id(self, run_id: str, command_id: str) -> dict:
         """
         Get a command along with any associated payload, result, and execution information.
         """
@@ -218,7 +187,7 @@ class API:
 
     # PROTOCOL MANAGEMENT
 
-    def get_protocols(self) -> Dict:
+    def get_protocols(self) -> dict:
         """
         Get a list of all currently uploaded protocols.
         """
@@ -237,7 +206,7 @@ class API:
         files = tuple(('files', f) for f in files)
         return self._post(Paths.PROTOCOLS, files=files)
 
-    def get_protocols_protocol_id(self, protocol_id: str) -> Dict:
+    def get_protocols_protocol_id(self, protocol_id: str) -> dict:
         """
         Get an uploaded protocol by ID.
         """
