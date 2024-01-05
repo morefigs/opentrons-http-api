@@ -1,6 +1,5 @@
 from typing import Sequence, BinaryIO, Dict, Optional
 import urllib
-from enum import Enum
 
 import requests
 
@@ -113,11 +112,11 @@ class API:
         """
         return self._get(Paths.SETTINGS)
 
-    def post_settings(self, id_: SettingId, value: bool) -> Dict:
+    def post_settings(self, id_: str, value: bool) -> Dict:
         """
         Change an advanced setting (feature flag).
         """
-        body = {'id': id_.value, 'value': value}
+        body = {'id': id_, 'value': value}
         return self._post(Paths.SETTINGS, body=body)
 
     def get_robot_settings(self) -> Dict:
@@ -146,7 +145,7 @@ class API:
         """
         return self._get(Paths.MOTORS_ENGAGED)
 
-    def post_motors_disengage(self, axes: Sequence[Axis]) -> Dict:
+    def post_motors_disengage(self, axes: Sequence[str]) -> Dict:
         """
         Disengage a motor or set of motors.
         """
@@ -176,21 +175,13 @@ class API:
         """
         return self._get(Paths.RUNS)
 
-    def post_runs(self, protocol_id: str, labware_offsets: Optional[Sequence[dict]] = None) -> Dict:
+    def post_runs(self, data: dict) -> dict:
         """
         Create a new run to track robot interaction.
 
         When too many runs already exist, old ones will be automatically deleted to make room for the new one.
         """
-        if labware_offsets is None:
-            labware_offsets = []
-
-        body = {
-            'data': {
-                'protocolId': protocol_id,
-                'labwareOffsets': labware_offsets,
-            }
-        }
+        body = {'data': data}
         return self._post(Paths.RUNS, body=body)
 
     def get_runs_run_id(self, run_id: str) -> Dict:
@@ -215,16 +206,12 @@ class API:
         path = Paths.RUNS_RUN_ID_COMMANDS_COMMAND_ID.format(run_id=run_id, command_id=command_id)
         return self._get(path)
 
-    def post_runs_run_id_actions(self, run_id: str, action: Action) -> Dict:
+    def post_runs_run_id_actions(self, run_id: str, data: dict) -> dict:
         """
         Provide an action in order to control execution of the run.
         """
         path = Paths.RUNS_RUN_ID_ACTIONS.format(run_id=run_id)
-        body = {
-            'data': {
-                'actionType': action.value
-            }
-        }
+        body = {'data': data}
         return self._post(path, body=body)
 
     # MAINTENANCE RUN MANAGEMENT
@@ -237,7 +224,7 @@ class API:
         """
         return self._get(Paths.PROTOCOLS)
 
-    def post_protocols(self, protocol_file: BinaryIO, labware_definitions: Optional[Sequence[BinaryIO]] = None) -> Dict:
+    def post_protocols(self, files: Sequence[BinaryIO]) -> dict:
         """
         Upload a protocol to your device. You may include the following files:
 
@@ -247,8 +234,7 @@ class API:
         When too many protocols already exist, old ones will be automatically deleted to make room for the new one. A
         protocol will never be automatically deleted if there's a run referring to it, though.
         """
-        all_files = (protocol_file, ) if labware_definitions is None else (protocol_file, *labware_definitions)
-        files = [('files', f) for f in all_files]
+        files = tuple(('files', f) for f in files)
         return self._post(Paths.PROTOCOLS, files=files)
 
     def get_protocols_protocol_id(self, protocol_id: str) -> Dict:
