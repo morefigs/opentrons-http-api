@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Dict, Optional
+from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -18,17 +18,17 @@ class RobotSettingsInfo:
     model: str
     name: str
     version: int
-    gantry_steps_per_mm: Dict
-    acceleration: Dict
+    gantry_steps_per_mm: dict
+    acceleration: dict
     serial_speed: int
-    default_pipette_configs: Dict
-    default_current: Dict
-    low_current: Dict
-    high_current: Dict
-    default_max_speed: Dict
+    default_pipette_configs: dict
+    default_current: dict
+    low_current: dict
+    high_current: dict
+    default_max_speed: dict
     log_level: str
     z_retract_distance: int
-    left_mount_offset: List[int]
+    left_mount_offset: list[int]
 
 
 @dataclass(frozen=True)
@@ -38,12 +38,12 @@ class HealthInfo:
     api_version: str
     fw_version: str
     board_revision: str
-    logs: List[str]
+    logs: list[str]
     system_version: str
-    maximum_protocol_api_version: List[int]
-    minimum_protocol_api_version: List[int]
+    maximum_protocol_api_version: list[int]
+    minimum_protocol_api_version: list[int]
     robot_serial: str
-    links: Dict[str, str]
+    links: dict[str, str]
 
 
 @dataclass(frozen=True)
@@ -52,13 +52,13 @@ class RunInfo:
     createdAt: str
     status: str
     current: bool
-    actions: List[dict]
-    errors: List[dict]
-    pipettes: List[dict]
-    modules: List[dict]
-    labware: List[dict]
-    liquids: List[dict]
-    labwareOffsets: List[dict]
+    actions: list[dict]
+    errors: list[dict]
+    pipettes: list[dict]
+    modules: list[dict]
+    labware: list[dict]
+    liquids: list[dict]
+    labwareOffsets: list[dict]
     protocolId: str
     completedAt: Optional[str] = None
     startedAt: Optional[str] = None
@@ -68,9 +68,9 @@ class RunInfo:
 class ProtocolInfo:
     id: str
     createdAt: str
-    files: List[Dict]
+    files: list[dict]
     protocolType: str
     robotType: str
-    metadata: Dict
-    analyses: List
-    analysisSummaries: List[Dict]
+    metadata: dict
+    analyses: list
+    analysisSummaries: list[dict]
