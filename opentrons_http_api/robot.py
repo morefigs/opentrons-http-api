@@ -1,8 +1,9 @@
 from __future__ import annotations
 from typing import Tuple, BinaryIO, Optional, Sequence
 
-from opentrons_http_api.api import API, SettingId, Action
-from opentrons_http_api.robot_info import SettingsInfo, RobotSettingsInfo, HealthInfo, RunInfo, ProtocolInfo
+from opentrons_http_api.api import API
+from opentrons_http_api.infos import SettingsInfo, RobotSettingsInfo, HealthInfo, RunInfo, ProtocolInfo
+from opentrons_http_api.enums import SettingId, Action
 
 
 class Robot:
@@ -42,7 +43,14 @@ class Robot:
         return tuple(RunInfo.from_dict(d) for d in ds['data'])
 
     def create_run(self, protocol_id: str, labware_offsets: Optional[Sequence[dict]] = None) -> RunInfo:
-        d = self._api.post_runs(protocol_id, labware_offsets)
+        if labware_offsets is None:
+            labware_offsets = []
+
+        data = {
+            'protocolId': protocol_id,
+            'labwareOffsets': labware_offsets,
+        }
+        d = self._api.post_runs(data)
         return RunInfo.from_dict(d['data'])
 
     def run(self, run_id: str) -> RunInfo:
@@ -50,7 +58,10 @@ class Robot:
         return RunInfo.from_dict(d['data'])
 
     def action_run(self, run_id: str, action: Action) -> None:
-        self._api.post_runs_run_id_actions(run_id, action)
+        data = {
+            'actionType': action.value
+        }
+        self._api.post_runs_run_id_actions(run_id, data)
 
     def upload_protocol(self, protocol_file: BinaryIO,
                         labware_definitions: Optional[Sequence[BinaryIO]] = None) -> ProtocolInfo:
@@ -61,5 +72,7 @@ class Robot:
         protocol_file is in Python format.
         :return: ProtocolInfo object containing information about the protocol.
         """
-        d = self._api.post_protocols(protocol_file, labware_definitions)
+        files = (protocol_file, ) if labware_definitions is None else (protocol_file, *labware_definitions)
+
+        d = self._api.post_protocols(files)
         return ProtocolInfo.from_dict(d['data'])
