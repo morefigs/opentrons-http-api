@@ -23,10 +23,8 @@ class Vector(_DictData):
 
 @dataclass(frozen=True)
 class LabwareOffset(_DictData):
-    # Leave empty when posting
     id: str
     createdAt: str
-
     definitionUri: str
     location: dict[str, str]
     vector: dict[str, float]
@@ -34,6 +32,13 @@ class LabwareOffset(_DictData):
     @property
     def vector_(self) -> Vector:
         return Vector(**self.vector)
+
+    @staticmethod
+    def create(definitionUri: str, location: dict[str, str], vector: dict[str, float]) -> LabwareOffset:
+        """
+        Create a user defined labware offset where id and createdAt are not known.
+        """
+        return LabwareOffset(id='', createdAt='', definitionUri=definitionUri, location=location, vector=vector)
 
 
 @dataclass(frozen=True)
