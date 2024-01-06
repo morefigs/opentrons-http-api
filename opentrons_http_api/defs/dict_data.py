@@ -1,10 +1,28 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Optional
 
 
 @dataclass(frozen=True)
-class SettingsInfo:
+class _DictData:
+    """
+    A class for easier creation and handling of data usually represented by a dict.
+    """
+    def dict(self) -> dict:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class LabwareOffset(_DictData):
+    id: str
+    createdAt: str
+    definitionUri: str
+    location: dict[str, str]
+    vector: dict[str, float]
+
+
+@dataclass(frozen=True)
+class Setting(_DictData):
     id: str
     old_id: str
     title: str
@@ -14,7 +32,7 @@ class SettingsInfo:
 
 
 @dataclass(frozen=True)
-class RobotSettingsInfo:
+class RobotSettings(_DictData):
     model: str
     name: str
     version: int
@@ -32,7 +50,7 @@ class RobotSettingsInfo:
 
 
 @dataclass(frozen=True)
-class HealthInfo:
+class HealthInfo(_DictData):
     name: str
     robot_model: str
     api_version: str
@@ -47,7 +65,7 @@ class HealthInfo:
 
 
 @dataclass(frozen=True)
-class RunInfo:
+class RunInfo(_DictData):
     id: str
     createdAt: str
     status: str
@@ -65,7 +83,7 @@ class RunInfo:
 
 
 @dataclass(frozen=True)
-class ProtocolInfo:
+class ProtocolInfo(_DictData):
     id: str
     createdAt: str
     files: list[dict]

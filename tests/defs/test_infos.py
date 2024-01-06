@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from opentrons_http_api.defs.infos import SettingsInfo, RobotSettingsInfo, HealthInfo, RunInfo, ProtocolInfo
+from opentrons_http_api.defs.dict_data import Setting, RobotSettings, HealthInfo, RunInfo, ProtocolInfo
 
 
 @pytest.fixture
@@ -89,13 +89,13 @@ def protocol_info_data():
 
 
 def test_settings_info(settings_info_data):
-    settings_info = SettingsInfo(**settings_info_data)
+    settings_info = Setting(**settings_info_data)
     assert settings_info.id == '123'
     assert settings_info.title == 'Test Title'
 
 
 def test_robot_settings_info(robot_settings_info_data):
-    robot_settings_info = RobotSettingsInfo(**robot_settings_info_data)
+    robot_settings_info = RobotSettings(**robot_settings_info_data)
     assert robot_settings_info.model == 'Test Model'
     assert robot_settings_info.serial_speed == 9600
 

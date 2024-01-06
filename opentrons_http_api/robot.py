@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Tuple, BinaryIO, Optional, Sequence
 
 from opentrons_http_api.api import API
-from opentrons_http_api.defs.infos import SettingsInfo, RobotSettingsInfo, HealthInfo, RunInfo, ProtocolInfo
+from opentrons_http_api.defs.dict_data import Setting, RobotSettings, HealthInfo, RunInfo, ProtocolInfo
 from opentrons_http_api.defs.enums import SettingId, Action
 
 
@@ -22,17 +22,17 @@ class Robot:
     def set_lights(self, on: bool) -> None:
         self._api.post_robot_lights(on)
 
-    def settings(self) -> Tuple[SettingsInfo, ...]:
+    def settings(self) -> Tuple[Setting, ...]:
         d = self._api.get_settings()
-        return tuple(SettingsInfo(**setting)
+        return tuple(Setting(**setting)
                      for setting in d['settings'])
 
     def set_setting(self, id_: SettingId, value: bool) -> None:
         self._api.post_settings(id_.value, value)
 
-    def robot_settings(self) -> RobotSettingsInfo:
+    def robot_settings(self) -> RobotSettings:
         d = self._api.get_robot_settings()
-        return RobotSettingsInfo(**d)
+        return RobotSettings(**d)
 
     def health(self) -> HealthInfo:
         info = self._api.get_health()
