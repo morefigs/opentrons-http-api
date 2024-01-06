@@ -23,8 +23,10 @@ class Vector(_DictData):
 
 @dataclass(frozen=True)
 class LabwareOffset(_DictData):
+    # Leave empty when posting
     id: str
     createdAt: str
+
     definitionUri: str
     location: dict[str, str]
     vector: dict[str, float]

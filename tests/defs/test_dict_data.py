@@ -2,7 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from opentrons_http_api.defs.dict_data import Vector, LabwareOffset, Setting, RobotSettings, HealthInfo, RunInfo, ProtocolInfo
+from opentrons_http_api.defs.dict_data import Vector, LabwareOffset, Setting, RobotSettings, HealthInfo, RunInfo, \
+    ProtocolInfo
 
 
 @pytest.fixture
