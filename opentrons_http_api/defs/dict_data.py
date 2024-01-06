@@ -1,3 +1,8 @@
+"""
+Dataclasses for easier creation and handling of data usually represented by a dict. Some classes with nested dicts also
+provide a property representing the nested dict as a class, with a trailing underscore following its name.
+"""
+
 from __future__ import annotations
 from dataclasses import dataclass, asdict
 from typing import Optional
@@ -5,11 +10,15 @@ from typing import Optional
 
 @dataclass(frozen=True)
 class _DictData:
-    """
-    A class for easier creation and handling of data usually represented by a dict.
-    """
     def dict(self) -> dict:
         return asdict(self)
+
+
+@dataclass(frozen=True)
+class Vector(_DictData):
+    x: float
+    y: float
+    z: float
 
 
 @dataclass(frozen=True)
@@ -19,6 +28,10 @@ class LabwareOffset(_DictData):
     definitionUri: str
     location: dict[str, str]
     vector: dict[str, float]
+
+    @property
+    def vector_(self) -> Vector:
+        return Vector(**self.vector)
 
 
 @dataclass(frozen=True)
@@ -80,6 +93,11 @@ class RunInfo(_DictData):
     protocolId: str
     completedAt: Optional[str] = None
     startedAt: Optional[str] = None
+
+    @property
+    def labwareOffsets_(self) -> list[LabwareOffset]:
+        return [LabwareOffset(**offset)
+                for offset in self.labwareOffsets]
 
 
 @dataclass(frozen=True)
