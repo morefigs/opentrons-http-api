@@ -5,7 +5,7 @@ provide a property representing the nested dict as a class, with a trailing unde
 
 from __future__ import annotations
 from dataclasses import dataclass, asdict
-from typing import Optional
+from typing import Optional, Union
 
 
 @dataclass(frozen=True)
@@ -34,10 +34,13 @@ class LabwareOffset(_DictData):
         return Vector(**self.vector)
 
     @staticmethod
-    def create(definitionUri: str, location: dict[str, str], vector: dict[str, float]) -> LabwareOffset:
+    def create(definitionUri: str, location: dict[str, str], vector: Union[dict[str, float], Vector]) -> LabwareOffset:
         """
         Create a user defined labware offset where id and createdAt are not known.
         """
+        if isinstance(vector, Vector):
+            vector = vector.dict()
+
         return LabwareOffset(id='', createdAt='', definitionUri=definitionUri, location=location, vector=vector)
 
 

@@ -11,7 +11,7 @@ def vector_data():
     return {
         'x': '1.23',
         'y': '4.56',
-        'z': '0',
+        'z': '99',
     }
 
 
@@ -120,7 +120,11 @@ def test_labware_offset(labware_offset_data, vector_data):
     assert labware_offset.definitionUri == 'opentrons/labware/1'
     assert labware_offset.vector_.dict() == vector_data
 
-    LabwareOffset.create(labware_offset.definitionUri, labware_offset.location, labware_offset.vector)
+    labware_offset = LabwareOffset.create(labware_offset.definitionUri, labware_offset.location, labware_offset.vector)
+    assert labware_offset.vector == vector_data
+
+    labware_offset = LabwareOffset.create(labware_offset.definitionUri, labware_offset.location, Vector(**vector_data))
+    assert labware_offset.vector == vector_data
 
 
 def test_setting(setting_data):
