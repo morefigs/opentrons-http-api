@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import Tuple, BinaryIO, Optional, Sequence
+from typing import Tuple, BinaryIO, Optional, Sequence, Union
 
 from opentrons_http_api.api import API
-from opentrons_http_api.defs.dict_data import Setting, RobotSettings, HealthInfo, RunInfo, ProtocolInfo
+from opentrons_http_api.defs.dict_data import LabwareOffset, Setting, RobotSettings, HealthInfo, RunInfo, ProtocolInfo
 from opentrons_http_api.defs.enums import SettingId, Action
 
 
@@ -27,8 +27,11 @@ class Robot:
         return tuple(Setting(**setting)
                      for setting in d['settings'])
 
-    def set_setting(self, id_: SettingId, value: bool) -> None:
-        self._api.post_settings(id_.value, value)
+    def set_setting(self, id_: Union[str, SettingId], value: bool) -> None:
+        if isinstance(id_, SettingId):
+            id_ = id_.value
+
+        self._api.post_settings(id_, value)
 
     def robot_settings(self) -> RobotSettings:
         d = self._api.get_robot_settings()
@@ -43,9 +46,15 @@ class Robot:
         return tuple(RunInfo(**run_info)
                      for run_info in d['data'])
 
-    def create_run(self, protocol_id: str, labware_offsets: Optional[Sequence[dict]] = None) -> RunInfo:
+    def create_run(self, protocol_id: str,
+                   labware_offsets: Optional[Union[Sequence[dict], Sequence[LabwareOffset]]] = None) -> RunInfo:
         if labware_offsets is None:
             labware_offsets = []
+
+        # Get labware offsets as dicts
+        else:
+            if isinstance(labware_offsets[0], LabwareOffset):
+                labware_offsets = [offset.dict() for offset in labware_offsets]
 
         data = {
             'protocolId': protocol_id,
@@ -58,9 +67,12 @@ class Robot:
         d = self._api.get_runs_run_id(run_id)
         return RunInfo(**d['data'])
 
-    def action_run(self, run_id: str, action: Action) -> None:
+    def action_run(self, run_id: str, action: Union[str, Action]) -> None:
+        if isinstance(action, Action):
+            action = action.value
+
         data = {
-            'actionType': action.value
+            'actionType': action
         }
         self._api.post_runs_run_id_actions(run_id, data)
 
