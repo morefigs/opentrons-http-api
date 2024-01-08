@@ -42,6 +42,8 @@ class Parameter:
         """
         The value as bytes.
         """
+        if self.type is str:
+            return f'"{self.value}"'.encode()
         return f'{self.value}'.encode()
 
 
