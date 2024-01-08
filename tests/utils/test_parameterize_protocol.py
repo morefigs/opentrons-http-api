@@ -15,6 +15,15 @@ def test_parameter(name: str, value: object, full_name_b: bytes, value_b: bytes)
     assert param.value_b == value_b
 
 
+@pytest.mark.parametrize('type_, value', [
+    (int, 'foo'),
+    (str, 123),
+])
+def test_parameter_type_check(type_, value):
+    with pytest.raises(ValueError):
+        Parameter('name', type_, value)
+
+
 def test_parameterize_protocol():
     # Test correct usage
     buffer_out = BytesIO()
