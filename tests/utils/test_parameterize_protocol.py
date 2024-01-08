@@ -31,11 +31,10 @@ def test_parameter_type_check(type_, value):
     (True, 'foo'),
     (True, 'foo_bar_123'),
     (True, ''),
-    (False, 'foo_bar_123 '),
-    (False, '1A'),
-    (False, 'A'),
-    (False, '-'),
-    (False, ' '),
+    (False, '"'),
+    (False, '""'),
+    (False, '\"'),
+    (False, '"print(123)'),
 ])
 def test_parameter_safe_str_check(safe, string):
     assert safe is Parameter.is_safe_str(string)

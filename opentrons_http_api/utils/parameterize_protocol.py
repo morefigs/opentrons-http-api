@@ -18,9 +18,9 @@ class Parameter:
     @staticmethod
     def is_safe_str(string: str) -> bool:
         """
-        Checks string is empty or contains only lowercase letters, numbers, and underscores.
+        Checks string can't escape quotes.
         """
-        return bool(re.match(r'^[a-z0-9_]*$', string))
+        return '"' not in string
 
     def __post_init__(self):
         if not type(self.value) is self.type:
@@ -28,7 +28,7 @@ class Parameter:
 
         # Prevent code injection
         if self.type is str and not self.is_safe_str(self.value):
-            raise ValueError('string values must only contain lower case letters, numbers, and underscores')
+            raise ValueError('string cannot contain double quote character')
 
     @property
     def token_b(self) -> bytes:
