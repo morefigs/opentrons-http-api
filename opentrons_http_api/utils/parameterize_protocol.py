@@ -1,4 +1,5 @@
-from typing import BinaryIO, Sequence
+import re
+from typing import BinaryIO, Sequence, Union, Type
 from dataclasses import dataclass
 
 
@@ -7,15 +8,32 @@ class Parameter:
     """
     A parameter name and value to replace a string token in a protocol file with.
 
-    For example, Parameter('foo', 123) would replace '''foo''' with 123 within the contents of a protocol file.
+    For example, Parameter('some_name', int, 123) would replace the instance of '''some_name''' with 123 within the
+    contents of a protocol file.
     """
     name: str
+    type: Union[Type[int], Type[float], Type[str]]
     value: object
 
-    @property
-    def full_name_b(self) -> bytes:
+    @staticmethod
+    def is_safe_str(string: str) -> bool:
         """
-        The name with quotes, e.g. '''some_string''', as bytes.
+        Checks string is empty or contains only lowercase letters, numbers, and underscores.
+        """
+        return bool(re.match(r'^[a-z0-9_]*$', string))
+
+    def __post_init__(self):
+        if not type(self.value) is self.type:
+            raise ValueError(f'expected type "{self.type}" but got {type(self.value)}')
+
+        # Prevent code injection
+        if self.type is str and not self.is_safe_str(self.value):
+            raise ValueError('string values must only contain lower case letters, numbers, and underscores')
+
+    @property
+    def token_b(self) -> bytes:
+        """
+        The full token with quotes, as bytes, e.g. b'''some_name'''.
         """
         return f"'''{self.name}'''".encode()
 
@@ -42,12 +60,12 @@ def parameterize_protocol(buffer_in: BinaryIO, buffer_out: BinaryIO, params: Seq
 
     for param in params:
         # Check exactly one of each token exists
-        count = contents.count(param.full_name_b)
+        count = contents.count(param.token_b)
         if count != 1:
-            raise ValueError(f'expected 1 occurrence of "{param.full_name_b}", but got {count} occurrences')
+            raise ValueError(f'expected 1 occurrence of "{param.token_b}", but got {count} occurrences')
 
         # Replace parameter tokens
-        contents = contents.replace(param.full_name_b, param.value_b)
+        contents = contents.replace(param.token_b, param.value_b)
 
     buffer_out.write(contents)
     buffer_out.seek(0)

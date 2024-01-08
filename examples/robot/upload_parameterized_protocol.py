@@ -4,8 +4,8 @@ from opentrons_http_api.utils.parameterize_protocol import parameterize_protocol
 
 ROBOT_IP = 'localhost'
 PARAMS = (
-    Parameter('num_flashes', 3),
-    Parameter('delay_s', 0.2),
+    Parameter('num_flashes', int, 3),
+    Parameter('delay_s', float, 0.2),
 )
 
 

@@ -1,17 +1,20 @@
 from io import BytesIO
+from typing import Union, Type
 
 import pytest
 
 from opentrons_http_api.utils.parameterize_protocol import Parameter, parameterize_protocol
 
 
-@pytest.mark.parametrize('name, value, full_name_b, value_b', [
-    ('foo', 123, b"'''foo'''", b'123'),
-    ('foo', '123', b"'''foo'''", b'123'),
+@pytest.mark.parametrize('name, type_, value, token_b, value_b', [
+    ('foo', int, 123, b"'''foo'''", b'123'),
+    ('foo', str, '123', b"'''foo'''", b'"123"'),
+    ('foo', str, 'bar', b"'''foo'''", b'"bar"'),
 ])
-def test_parameter(name: str, value: object, full_name_b: bytes, value_b: bytes):
-    param = Parameter(name, value)
-    assert param.full_name_b == full_name_b
+def test_parameter(name: str, type_: Union[Type[int], Type[float], Type[str]], value: object, token_b: bytes,
+                   value_b: bytes):
+    param = Parameter(name, type_, value)
+    assert param.token_b == token_b
     assert param.value_b == value_b
 
 
@@ -24,13 +27,33 @@ def test_parameter_type_check(type_, value):
         Parameter('name', type_, value)
 
 
+@pytest.mark.parametrize('safe, string', [
+    (True, 'foo'),
+    (True, 'foo_bar_123'),
+    (True, ''),
+    (False, 'foo_bar_123 '),
+    (False, '1A'),
+    (False, 'A'),
+    (False, '-'),
+    (False, ' '),
+])
+def test_parameter_safe_str_check(safe, string):
+    assert safe is Parameter.is_safe_str(string)
+
+    if safe:
+        Parameter('name', str, string)
+    else:
+        with pytest.raises(ValueError):
+            Parameter('name', str, string)
+
+
 def test_parameterize_protocol():
     # Test correct usage
     buffer_out = BytesIO()
     parameterize_protocol(
         BytesIO(b"NUM_FLASHES = '''num_flashes'''\nDELAY_S = '''delay_s'''"),
         buffer_out,
-        [Parameter('num_flashes', 3), Parameter('delay_s', 0.2)]
+        [Parameter('num_flashes', int, 3), Parameter('delay_s', float, 0.2)]
     )
     assert buffer_out.read() == b"NUM_FLASHES = 3\nDELAY_S = 0.2"
 
@@ -44,5 +67,5 @@ def test_parameterize_protocol():
         parameterize_protocol(
             BytesIO(b"NUM_FLASHES = '''num_flashes'''\nDELAY_S = '''delay_s'''"),
             BytesIO(),
-            [Parameter('num_flashes', 3), Parameter('delay_s', 0.2), Parameter('fake', 123)]
+            [Parameter('num_flashes', int, 3), Parameter('delay_s', float, 0.2), Parameter('fake', int, 123)]
         )
