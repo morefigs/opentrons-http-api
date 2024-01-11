@@ -8,7 +8,7 @@ from opentrons_http_api.defs.enums import SettingId, Action
 
 class Robot:
     """
-    A friendlier interface for the Opentrons HTTP API.
+    Robot client interface that utilises the Opentrons HTTP API.
     """
     def __init__(self, host: str = 'localhost'):
         self._api = API(host)
