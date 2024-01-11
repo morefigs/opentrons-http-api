@@ -1,9 +1,9 @@
-from opentrons_http_api.robot import Robot
+from opentrons_http_api.robot_client import RobotClient
 
 
 ROBOT_IP = 'localhost'
 
 
-robot = Robot(ROBOT_IP)
+robot = RobotClient(ROBOT_IP)
 robot.set_lights(True)
 assert robot.lights()

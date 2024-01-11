@@ -6,7 +6,7 @@ from opentrons_http_api.defs.dict_data import LabwareOffset, Setting, RobotSetti
 from opentrons_http_api.defs.enums import SettingId, Action
 
 
-class Robot:
+class RobotClient:
     """
     Robot client interface that utilises the Opentrons HTTP API.
     """

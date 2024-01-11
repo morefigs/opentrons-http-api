@@ -1,4 +1,4 @@
-from opentrons_http_api.robot import Robot
+from opentrons_http_api.robot_client import RobotClient
 from opentrons_http_api.utils.parameterize_protocol import parameterize_protocol, Parameter
 
 
@@ -9,7 +9,7 @@ PARAMS = (
 )
 
 
-robot = Robot(ROBOT_IP)
+robot = RobotClient(ROBOT_IP)
 
 # Doesn't work with buffer_out as a BytesIO or tempfile object
 with open('_temp.py', 'w+b') as buffer_out:

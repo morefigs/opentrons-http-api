@@ -10,7 +10,7 @@ class API:
     """
     Basic Python client for Opentrons HTTP API.
 
-    Use the Robot class for a friendlier interface.
+    Use the RobotClient class for a friendlier interface.
     """
     _HEADERS = {'Opentrons-Version': '3'}
     _PORT = 31950
