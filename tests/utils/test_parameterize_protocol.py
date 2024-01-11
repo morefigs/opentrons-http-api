@@ -7,9 +7,9 @@ from opentrons_http_api.utils.parameterize_protocol import Parameter, parameteri
 
 
 @pytest.mark.parametrize('name, type_, value, token_b, value_b', [
-    ('foo', int, 123, b"'''foo'''", b'123'),
-    ('foo', str, '123', b"'''foo'''", b'"123"'),
-    ('foo', str, 'bar', b"'''foo'''", b'"bar"'),
+    ('foo', int, 123, b"'''parameter: foo'''", b'123'),
+    ('foo', str, '123', b"'''parameter: foo'''", b'"123"'),
+    ('foo', str, 'bar', b"'''parameter: foo'''", b'"bar"'),
 ])
 def test_parameter(name: str, type_: Union[Type[int], Type[float], Type[str]], value: object, token_b: bytes,
                    value_b: bytes):
@@ -50,7 +50,7 @@ def test_parameterize_protocol():
     # Test correct usage
     buffer_out = BytesIO()
     parameterize_protocol(
-        BytesIO(b"NUM_FLASHES = '''num_flashes'''\nDELAY_S = '''delay_s'''"),
+        BytesIO(b"NUM_FLASHES = '''parameter: num_flashes'''\nDELAY_S = '''parameter: delay_s'''"),
         buffer_out,
         [Parameter('num_flashes', int, 3), Parameter('delay_s', float, 0.2)]
     )
@@ -61,10 +61,18 @@ def test_parameterize_protocol():
     with pytest.raises(ValueError):
         parameterize_protocol(buffer, buffer, [])
 
-    # Test missing protocol
+    # Test extra parameter
     with pytest.raises(ValueError):
         parameterize_protocol(
-            BytesIO(b"NUM_FLASHES = '''num_flashes'''\nDELAY_S = '''delay_s'''"),
+            BytesIO(b"NUM_FLASHES = '''parameter: num_flashes'''\nDELAY_S = '''parameter: delay_s'''"),
             BytesIO(),
             [Parameter('num_flashes', int, 3), Parameter('delay_s', float, 0.2), Parameter('fake', int, 123)]
+        )
+
+    # Test missing parameter
+    with pytest.raises(ValueError):
+        parameterize_protocol(
+            BytesIO(b"NUM_FLASHES = '''parameter: num_flashes'''\nDELAY_S = '''parameter: delay_s'''"),
+            BytesIO(),
+            [Parameter('num_flashes', int, 3)]
         )

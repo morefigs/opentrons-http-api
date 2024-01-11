@@ -8,9 +8,12 @@ class Parameter:
     """
     A parameter name and value to replace a string token in a protocol file with.
 
-    For example, Parameter('some_name', int, 123) would replace the instance of '''some_name''' with 123 within the
-    contents of a protocol file.
+    For example, Parameter('some_name', int, 123) would replace the instance of '''parameter: some_name''' with 123
+    within the contents of a protocol file.
     """
+    PREFIX = "'''parameter: "
+    SUFFIX = "'''"
+
     name: str
     type: Union[Type[int], Type[float], Type[str]]
     value: object
@@ -33,9 +36,9 @@ class Parameter:
     @property
     def token_b(self) -> bytes:
         """
-        The full token with quotes, as bytes, e.g. b'''some_name'''.
+        The full token with quotes, as bytes, e.g. b'''parameter: some_name'''.
         """
-        return f"'''{self.name}'''".encode()
+        return f"{self.PREFIX}{self.name}{self.SUFFIX}".encode()
 
     @property
     def value_b(self) -> bytes:
@@ -68,6 +71,10 @@ def parameterize_protocol(buffer_in: BinaryIO, buffer_out: BinaryIO, params: Seq
 
         # Replace parameter tokens
         contents = contents.replace(param.token_b, param.value_b)
+
+    # Check no parameters were missed
+    if Parameter.PREFIX.encode() in contents:
+        raise ValueError('it appears not all parameters were replaced')
 
     buffer_out.write(contents)
     buffer_out.seek(0)
