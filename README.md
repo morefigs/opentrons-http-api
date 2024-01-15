@@ -14,4 +14,4 @@ pip install opentrons-http-api
 
 ## Usage
 
-See [examples/robot/](examples/robot/) for usage examples.
+See [examples/robot_client/](examples/robot_client/) for usage examples.

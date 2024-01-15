@@ -4,6 +4,6 @@ build/
 .DS_Store
 .python-version
 poetry.lock
-/examples/robot/_temp.py
+/examples/robot_client/_temp.py
 /.venv/
 __pycache__/
