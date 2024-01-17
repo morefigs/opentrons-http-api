@@ -35,9 +35,16 @@ class Status(_DictData):
     status: EngineStatus
 
     @property
+    def is_idle(self) -> bool:
+        """
+        Returns True iff the run has not yet started (assuming the status is up to date).
+        """
+        return self.status is EngineStatus.IDLE
+
+    @property
     def is_active(self) -> bool:
         """
-        Returns True iff the run has not yet completely stopped.
+        Returns True iff the run was started but has not yet completely stopped.
         """
         return self.status in (
             EngineStatus.RUNNING,
@@ -45,6 +52,17 @@ class Status(_DictData):
             EngineStatus.BLOCKED_BY_OPEN_DOOR,
             EngineStatus.STOP_REQUESTED,
             EngineStatus.FINISHING,
+        )
+
+    @property
+    def is_completed(self) -> bool:
+        """
+        Returns True iff the run was started and has completely stopped.
+        """
+        return self.status in (
+            EngineStatus.STOPPED,
+            EngineStatus.FAILED,
+            EngineStatus.SUCCEEDED,
         )
 
 
