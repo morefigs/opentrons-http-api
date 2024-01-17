@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from opentrons_http_api.defs.dict_data import Vector, LabwareOffset, Setting, RobotSettings, HealthInfo, RunInfo, \
-    ProtocolInfo
+    ProtocolInfo, EngineStatus
 
 
 @pytest.fixture
@@ -149,6 +149,8 @@ def test_run_info(run_info_data, labware_offset_data):
     run_info = RunInfo(**run_info_data)
     assert run_info.id == '789'
     assert run_info.status == 'running'
+    assert run_info.status_.status == EngineStatus('running')
+    assert run_info.status_.is_active
     assert run_info.labwareOffsets_[0].dict() == labware_offset_data
 
 

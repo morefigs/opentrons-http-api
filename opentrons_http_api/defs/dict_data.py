@@ -2,16 +2,50 @@
 Dataclasses for easier creation and handling of data usually represented by a dict. Some classes with nested dicts also
 provide a property representing the nested dict as a class, with a trailing underscore following its name.
 """
-
 from __future__ import annotations
+
 from dataclasses import dataclass, asdict
 from typing import Optional, Union
+from enum import Enum
+
+
+class EngineStatus(str, Enum):
+    """
+    Copied from opentrons.protocol_engine.types.EngineStatus.
+    """
+    IDLE = "idle"
+    RUNNING = "running"
+    PAUSED = "paused"
+    BLOCKED_BY_OPEN_DOOR = "blocked-by-open-door"
+    STOP_REQUESTED = "stop-requested"
+    STOPPED = "stopped"
+    FINISHING = "finishing"
+    FAILED = "failed"
+    SUCCEEDED = "succeeded"
 
 
 @dataclass(frozen=True)
 class _DictData:
     def dict(self) -> dict:
         return asdict(self)
+
+
+@dataclass(frozen=True)
+class Status(_DictData):
+    status: EngineStatus
+
+    @property
+    def is_active(self) -> bool:
+        """
+        Returns True iff the run has not yet completely stopped.
+        """
+        return self.status in (
+            EngineStatus.RUNNING,
+            EngineStatus.PAUSED,
+            EngineStatus.BLOCKED_BY_OPEN_DOOR,
+            EngineStatus.STOP_REQUESTED,
+            EngineStatus.FINISHING,
+        )
 
 
 @dataclass(frozen=True)
@@ -103,6 +137,10 @@ class RunInfo(_DictData):
     protocolId: str
     completedAt: Optional[str] = None
     startedAt: Optional[str] = None
+
+    @property
+    def status_(self) -> Status:
+        return Status(EngineStatus(self.status))
 
     @property
     def labwareOffsets_(self) -> list[LabwareOffset]:
