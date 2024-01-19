@@ -76,6 +76,11 @@ class RobotClient:
         }
         self._api.post_runs_run_id_actions(run_id, data)
 
+    def protocols(self) -> Tuple[ProtocolInfo, ...]:
+        d = self._api.get_protocols()
+        return tuple(ProtocolInfo(**protocol_info)
+                     for protocol_info in d['data'])
+
     def upload_protocol(self, protocol_file: BinaryIO,
                         labware_definitions: Optional[Sequence[BinaryIO]] = None) -> ProtocolInfo:
         """
