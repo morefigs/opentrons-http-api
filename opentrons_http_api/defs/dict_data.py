@@ -55,7 +55,7 @@ class Status(_DictData):
         )
 
     @property
-    def is_completed(self) -> bool:
+    def is_done(self) -> bool:
         """
         Returns True iff the run was started and has completely stopped.
         """

@@ -152,7 +152,7 @@ def test_run_info(run_info_data, labware_offset_data):
     assert run_info.status_.status == EngineStatus('running')
     assert run_info.status_.is_active
     assert not run_info.status_.is_idle
-    assert not run_info.status_.is_completed
+    assert not run_info.status_.is_done
     assert run_info.labwareOffsets_[0].dict() == labware_offset_data
 
 
