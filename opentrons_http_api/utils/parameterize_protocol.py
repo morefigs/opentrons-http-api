@@ -16,7 +16,7 @@ class Parameter:
 
     name: str
     type: Union[Type[int], Type[float], Type[str]]
-    value: object
+    value: Union[int, float, str]
 
     @staticmethod
     def is_safe_str(string: str) -> bool:
