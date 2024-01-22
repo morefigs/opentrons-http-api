@@ -41,6 +41,16 @@ class Status(_DictData):
         )
 
     @property
+    def is_ending(self) -> bool:
+        """
+        Returns True iff the run is ending.
+        """
+        return self.status in (
+            EngineStatus.STOP_REQUESTED,
+            EngineStatus.FINISHING,
+        )
+
+    @property
     def is_done(self) -> bool:
         """
         Returns True iff the run was started and has completely stopped.
