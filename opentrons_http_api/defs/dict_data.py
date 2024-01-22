@@ -6,22 +6,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, asdict
 from typing import Optional, Union
-from enum import Enum
 
-
-class EngineStatus(str, Enum):
-    """
-    Copied from opentrons.protocol_engine.types.EngineStatus.
-    """
-    IDLE = "idle"
-    RUNNING = "running"
-    PAUSED = "paused"
-    BLOCKED_BY_OPEN_DOOR = "blocked-by-open-door"
-    STOP_REQUESTED = "stop-requested"
-    STOPPED = "stopped"
-    FINISHING = "finishing"
-    FAILED = "failed"
-    SUCCEEDED = "succeeded"
+from opentrons_http_api.defs.enums import EngineStatus
 
 
 @dataclass(frozen=True)

@@ -2,8 +2,9 @@ from datetime import datetime
 
 import pytest
 
+from opentrons_http_api.defs.enums import EngineStatus
 from opentrons_http_api.defs.dict_data import Vector, LabwareOffset, Setting, RobotSettings, HealthInfo, RunInfo, \
-    ProtocolInfo, EngineStatus
+    ProtocolInfo
 
 
 @pytest.fixture

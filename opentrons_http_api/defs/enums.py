@@ -31,3 +31,18 @@ class Action(str, Enum):
     PLAY = 'play'
     PAUSE = 'pause'
     STOP = 'stop'
+
+
+class EngineStatus(str, Enum):
+    """
+    Copied from opentrons.protocol_engine.types.EngineStatus.
+    """
+    IDLE = "idle"
+    RUNNING = "running"
+    PAUSED = "paused"
+    BLOCKED_BY_OPEN_DOOR = "blocked-by-open-door"
+    STOP_REQUESTED = "stop-requested"
+    STOPPED = "stopped"
+    FINISHING = "finishing"
+    FAILED = "failed"
+    SUCCEEDED = "succeeded"
