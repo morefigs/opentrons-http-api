@@ -63,6 +63,17 @@ class Status(_DictData):
 
 
 @dataclass(frozen=True)
+class Error(_DictData):
+    id: str
+    createdAt: str
+    errorCode: str
+    errorType: str
+    detail: str
+    errorInfo: dict
+    wrappedErrors: list[dict]
+
+
+@dataclass(frozen=True)
 class Vector(_DictData):
     x: float
     y: float
@@ -155,6 +166,11 @@ class RunInfo(_DictData):
     @property
     def status_(self) -> Status:
         return Status(EngineStatus(self.status))
+
+    @property
+    def errors_(self) -> list[Error]:
+        return [Error(**error)
+                for error in self.errors]
 
     @property
     def labwareOffsets_(self) -> list[LabwareOffset]:

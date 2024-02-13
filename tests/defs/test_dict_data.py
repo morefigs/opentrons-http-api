@@ -3,8 +3,28 @@ from datetime import datetime
 import pytest
 
 from opentrons_http_api.defs.enums import EngineStatus
-from opentrons_http_api.defs.dict_data import Vector, LabwareOffset, Setting, RobotSettings, HealthInfo, RunInfo, \
+from opentrons_http_api.defs.dict_data import Status, Error, Vector, LabwareOffset, Setting, RobotSettings, HealthInfo, RunInfo, \
     ProtocolInfo
+
+
+@pytest.fixture
+def status_data():
+    return {
+        'status': EngineStatus.PAUSED,
+    }
+
+
+@pytest.fixture
+def error_data():
+    return {
+        'id': '12-345',
+        'createdAt': str(datetime.now()),
+        'errorCode': '1000',
+        'errorType': 'BadError',
+        'detail': 'Very bad error',
+        'errorInfo': {},
+        'wrappedErrors': [{}],
+    }
 
 
 @pytest.fixture
@@ -108,6 +128,20 @@ def protocol_info_data():
         'analyses': [{'analysis1': 'result1'}, {'analysis2': 'result2'}],
         'analysisSummaries': [{'summary1': 'result1'}, {'summary2': 'result2'}]
     }
+
+
+def test_status(status_data):
+    status = Status(**status_data)
+    assert status.status is EngineStatus.PAUSED
+    assert status.is_active
+    assert not status.is_idle
+    assert not status.is_done
+
+
+def test_error(error_data):
+    error = Error(**error_data)
+    assert error.id == '12-345'
+    assert error.errorCode == '1000'
 
 
 def test_vector(vector_data):
