@@ -1,3 +1,5 @@
+from time import sleep
+
 from opentrons_http_api.robot_client import RobotClient, Action
 
 
@@ -10,11 +12,13 @@ robot = RobotClient(ROBOT_IP)
 with open('../example_protocol.py', 'rb') as f:
     protocol_info = robot.upload_protocol(f)
 
-# Create a run
+# Create a start a run
 run_info = robot.create_run(protocol_info.id)
-
-# Start the run
 robot.action_run(run_info.id, Action.PLAY)
 
-# Check run status
-print(robot.run(run_info.id).status)
+# Poll run status
+while not run_info.status_.is_done:
+    run_info = robot.run(run_info.id)
+    print(run_info.status, [(error.errorType, error.detail)
+                            for error in run_info.errors_])
+    sleep(1)
