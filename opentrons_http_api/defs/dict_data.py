@@ -89,6 +89,10 @@ class LabwareOffset(_DictData):
     vector: dict[str, float]
 
     @property
+    def slotName(self) -> str:
+        return self.location['slotName']
+
+    @property
     def vector_(self) -> Vector:
         return Vector(**self.vector)
 
