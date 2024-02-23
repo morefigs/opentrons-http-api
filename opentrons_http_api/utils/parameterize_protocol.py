@@ -15,8 +15,8 @@ class Parameter:
     SUFFIX = "'''"
 
     name: str
-    type: Union[Type[int], Type[float], Type[str]]
-    value: Union[int, float, str]
+    type: Union[Type[int], Type[float], Type[str], Type[list], Type[tuple], Type[dict]]
+    value: Union[int, float, str, list, tuple, dict]
 
     @staticmethod
     def is_safe_str(string: str) -> bool:

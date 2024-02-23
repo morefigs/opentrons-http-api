@@ -10,8 +10,17 @@ from opentrons_http_api.utils.parameterize_protocol import Parameter, parameteri
     ('foo', int, 123, b"'''parameter: foo'''", b'123'),
     ('foo', str, '123', b"'''parameter: foo'''", b'"123"'),
     ('foo', str, 'bar', b"'''parameter: foo'''", b'"bar"'),
+    ('foo', list, [1, 2, 3], b"'''parameter: foo'''", b'[1, 2, 3]'),
+    ('foo', list, [1], b"'''parameter: foo'''", b'[1]'),
+    ('foo', tuple, (1, 2, 3), b"'''parameter: foo'''", b'(1, 2, 3)'),
+    ('foo', tuple, (1,), b"'''parameter: foo'''", b'(1,)'),
+    ('foo', dict, {'a': 1, 'b': 2}, b"'''parameter: foo'''", b"{'a': 1, 'b': 2}"),
+
 ])
-def test_parameter(name: str, type_: Union[Type[int], Type[float], Type[str]], value: object, token_b: bytes,
+def test_parameter(name: str,
+                   type_: Union[Type[int], Type[float], Type[str], Type[list], Type[tuple]],
+                   value: Union[int, float, str, list, tuple],
+                   token_b: bytes,
                    value_b: bytes):
     param = Parameter(name, type_, value)
     assert param.token_b == token_b
@@ -20,7 +29,12 @@ def test_parameter(name: str, type_: Union[Type[int], Type[float], Type[str]], v
 
 @pytest.mark.parametrize('type_, value', [
     (int, 'foo'),
+    (list, 'foo'),
+    (list, {'a': 1, 'b': 2}),
     (str, 123),
+    (list, 123),
+    (tuple, 123),
+    (dict, 123),
 ])
 def test_parameter_type_check(type_, value):
     with pytest.raises(ValueError):
