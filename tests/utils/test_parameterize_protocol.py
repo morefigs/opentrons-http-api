@@ -1,4 +1,3 @@
-from io import BytesIO
 from typing import Union, Type
 
 import pytest
@@ -62,7 +61,6 @@ def test_parameter_safe_str_check(safe, string):
 
 def test_inject_parameters():
     # Test correct usage
-    buffer_out = BytesIO()
     assert inject_parameters(
         b"NUM_FLASHES = '''parameter: num_flashes'''\nDELAY_S = '''parameter: delay_s'''",
         [Parameter('num_flashes', int, 3), Parameter('delay_s', float, 0.2)]
