@@ -1,5 +1,4 @@
-import re
-from typing import BinaryIO, Sequence, Union, Type
+from typing import Sequence, Union, Type
 from dataclasses import dataclass
 
 
@@ -50,31 +49,24 @@ class Parameter:
         return f'{self.value}'.encode()
 
 
-def parameterize_protocol(buffer_in: BinaryIO, buffer_out: BinaryIO, params: Sequence[Parameter]) -> None:
+def inject_parameters(protocol: bytes, params: Sequence[Parameter]) -> bytes:
     """
-    Replaces parameter tokens with their values in a protocol file binary object as a means of dynamically enabling
-    parameters to be injected into an otherwise fixed parameter file.
-    :param buffer_in: The protocol file buffer to insert parameters into.
-    :param buffer_out: The output protocol file buffer with parameters injected.
-    :param params: The parameter names and values to replace.
+    Replaces parameter tokens with their values in a protocol, as bytes, as a means of dynamically enabling parameters
+    to be injected into an otherwise fixed parameter file.
+    :param protocol: The protocol code as bytes to insert parameters into.
+    :param params: The parameters to insert.
     """
-    if buffer_in is buffer_out:
-        raise ValueError("buffer_in and buffer_out can't be the same")
-
-    contents = buffer_in.read()
-
     for param in params:
         # Check exactly one of each token exists
-        count = contents.count(param.token_b)
+        count = protocol.count(param.token_b)
         if count != 1:
             raise ValueError(f'expected 1 occurrence of "{param.token_b}", but got {count} occurrences')
 
         # Replace parameter tokens
-        contents = contents.replace(param.token_b, param.value_b)
+        protocol = protocol.replace(param.token_b, param.value_b)
 
     # Check no parameters were missed
-    if Parameter.PREFIX.encode() in contents:
+    if Parameter.PREFIX.encode() in protocol:
         raise ValueError('it appears not all parameters were replaced')
 
-    buffer_out.write(contents)
-    buffer_out.seek(0)
+    return protocol
