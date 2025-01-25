@@ -12,7 +12,7 @@ robot = RobotClient(ROBOT_IP)
 with open('../example_protocol.py', 'rb') as f:
     protocol_info = robot.upload_protocol(f)
 
-# Create a start a run
+# Create and start a run
 run_info = robot.create_run(protocol_info.id)
 robot.action_run(run_info.id, Action.PLAY)
 
